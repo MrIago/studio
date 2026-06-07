@@ -33,6 +33,18 @@ Nunca commite a chave. Custo: `usage.cost × 100` = créditos (1cr = 1¢ USD).
    (~4cr) e rápida — iterar é o fluxo natural. Padrão: gera no modelo recomendado,
    mostra, ajusta se o usuário pedir.
 
+### Fluxo para MÚLTIPLAS imagens (carrossel/lote) — planejar antes, gerar em paralelo
+
+Nunca gere → descubra que falta uma ref → regere (cada gpt-5.4 leva ~150-190s;
+rodadas repetidas desperdiçam minutos). Ordem certa:
+1. **Planeje** todas as imagens (quantas, o que cada uma mostra, a narrativa).
+2. **Colete TODAS as referências ANTES** (peça os links ao usuário — um por vez,
+   regra de ouro 3 — e baixe todas as fotos).
+3. **Monte o prompt completo de cada imagem** + defina quais refs entram em cada.
+4. **Só então gere — TODAS em paralelo numa única rodada** (`Promise.all` no script).
+   O paralelismo funciona: N imagens via Promise.all levam ≈ o tempo da mais lenta,
+   não a soma. Uma rodada planejada >> várias rodadas de tentativa-e-erro.
+
 ## Qual modelo usar (resumo — detalhe em `references/qual-usar.md`)
 
 **Filosofia: gpt-5.4-image-2 é o padrão no-brainer.** Mais confiável em qualidade.
@@ -63,7 +75,16 @@ seedream/gemini. Veja velocidade em `references/velocidade.md`.
    de imagens fornecidas — e é o mais fiel.
 2. **Editar identidade de pessoa real** → SEMPRE mandar as fotos reais dela junto
    (a imagem a editar + N refs do rosto). Nunca editar só a imagem gerada.
-3. **Peça o link/foto ao usuário** antes de pescar referência ruim da web.
+3. **Foto externa real (pessoa/personagem/time/lugar/documento)** → NUNCA busque
+   você mesmo nem pergunte "quer que eu busque" (é lento e traz foto errada).
+   Mande ao usuário o **link do Google Imagens já com o termo pesquisado**:
+   `https://www.google.com/search?udm=2&q=<termo+url+encoded>` (`udm=2` = aba Imagens).
+   - **Peça UMA referência por vez** (time → depois carta → depois estádio), não tudo junto.
+   - **Aceite MÚLTIPLAS fotos da mesma coisa** (vários ângulos). O usuário não escolhe
+     "a melhor" — manda quantas quiser; você passa TODAS como `refs` pro gpt-5.4. Com
+     vários ângulos a IA entende melhor o objeto/pessoa e **compõe a imagem nova que
+     você quer** (pose/estilo/layout específico — ex: foto antiga num slide brutalista)
+     **mantendo a consistência das pessoas/coisa reais**, mesmo que essa foto exata não exista.
 
 ## Como chamar (caixas seladas)
 
