@@ -1,0 +1,10 @@
+{
+  "name": "studio",
+  "version": "0.1.0",
+  "description": "Estúdio de geração de mídia por IA via OpenRouter: gera e edita imagens (qualidade premium, realismo com pessoas, ícones transparentes, logos SVG, paleta de marca, 65 estilos), compõe cenas fiéis com personagens/famosos a partir de fotos de referência, narração de voz (46 vozes/18 idiomas com estilos, PT-BR) e música instrumental. Caixa selada por modelo + guia 'qual usar' por caso (qualidade vs rápido/barato, custo, velocidade).",
+  "author": { "name": "Iago Lima Toledo", "url": "https://github.com/MrIago" },
+  "repository": "https://github.com/MrIago/studio",
+  "homepage": "https://github.com/MrIago/studio",
+  "license": "MIT",
+  "keywords": ["openrouter", "image-generation", "image-editing", "tts", "voice", "music", "svg", "transparent-png", "ai-art", "media", "gpt-image", "seedream", "recraft", "lyria", "mai-voice"]
+}
