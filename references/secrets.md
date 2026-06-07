@@ -17,6 +17,19 @@ Salva em `~/.config/studio/.env` (privado, não commitado). A skill lê dali.
 export OPENROUTER_KEY=sk-or-v1-...
 ```
 
+## Outras chaves (opcionais, habilitam recursos)
+
+- **`GEMINI_API_KEY`** (console: aistudio.google.com/apikey) — narração gemini-tts.
+  Com ela, usa a API NATIVA do Google → habilita **diálogo multi-personagem**
+  (2 vozes num request). Sem ela, a narração cai pro OpenRouter (1 voz/request;
+  3+ personagens via `manyVoices`, 1 áudio por fala). `geminiTts` funciona nos dois.
+- **`GROQ_API_KEY`** (console.groq.com/keys, grátis ~8h/dia) — transcrição/timestamps
+  (`transcribe()`) pra sincronizar narração com vídeo. Roda na nuvem (sem GPU).
+
+```bash
+node ${CLAUDE_SKILL_DIR}/scripts/lib/config.mjs GEMINI_API_KEY=... GROQ_API_KEY=...
+```
+
 ## Chave de provisioning (caso raro)
 
 Se a chave for uma **management/provisioning key** (que não gera direto — só

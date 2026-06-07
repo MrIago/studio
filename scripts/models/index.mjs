@@ -9,9 +9,11 @@ export { gemini25Flash } from './gemini-2-5-flash.mjs';
 export { grokImagine } from './grok-imagine.mjs';
 export { recraftV3 } from './recraft-v3.mjs';
 export { recraftV41ProVector } from './recraft-v4-1-pro-vector.mjs';
-// áudio
-export { maiVoice2 } from './mai-voice-2.mjs';
+// áudio — TTS: gemini-tts é o PADRÃO (tags de emoção inline + multi-personagem).
+export { geminiTts, geminiDialog, manyVoices } from './gemini-tts.mjs';
 export { lyria3 } from './lyria-3.mjs';
+// transcrição (timestamps p/ sincronizar narração com vídeo)
+export { transcribe, formatTranscript } from '../lib/transcribe.mjs';
 
 // Tabela de decisão (caso → função recomendada). Espelha QUAL-USAR.md.
 export const QUAL_USAR = {
@@ -30,6 +32,7 @@ export const QUAL_USAR = {
   svg:                  { fn: 'recraftV41ProVector',  nota: 'ícone/logo vetorial — sem fallback' },
   paleta:               { fn: 'recraftV3',            nota: 'rgb_colors forçado (todos recraft têm)' },
   // áudio
-  narracaoTTS:          { fn: 'maiVoice2',            nota: '46 vozes/18 idiomas, PT-BR + estilos + speed' },
+  narracaoTTS:          { fn: 'geminiTts',            nota: '30 vozes + tags emoção inline ([excited]/[whispers]); auto adapta tom' },
+  dialogoPersonagens:   { fn: 'geminiDialog',         nota: '2 vozes num request (precisa GEMINI_API_KEY); 3+ → manyVoices' },
   musica:               { fn: 'lyria3',               nota: 'clip ~31s/~4cr · pro ~2,6min/~8cr (único de música)' },
 };

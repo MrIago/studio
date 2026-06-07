@@ -76,5 +76,5 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   const style = process.argv[3] || 'Photorealism';
   console.log(`▸ recraft-v3 | style="${style}" | "${prompt}"`);
   const r = await recraftV3({ prompt, style });
-  save(r, `/tmp/recraft-v3-out`);
+  save(r, 'recraft-v3-out', { open: true });
 }

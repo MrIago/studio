@@ -61,5 +61,5 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   const { save } = await import('../lib/or.mjs');
   const prompt = process.argv[2] || 'a red apple on a white table';
   console.log(`▸ gpt-5.4-image-2 | "${prompt}" (pode levar ~2,5min)`);
-  save(await gpt54Image2({ prompt }), `/tmp/gpt54-out`);
+  save(await gpt54Image2({ prompt }), 'gpt54-out', { open: true });
 }

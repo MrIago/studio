@@ -25,5 +25,5 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   const { save } = await import('../lib/or.mjs');
   const p = process.argv[2] || 'a red apple on a white table';
   console.log(`▸ grok-imagine | "${p}"`);
-  save(await grokImagine({ prompt: p }), '/tmp/grok-out');
+  save(await grokImagine({ prompt: p }), 'grok-out', { open: true });
 }

@@ -2,6 +2,7 @@
 // gemini só sai em PCM → wrappa em WAV (24kHz mono 16-bit). mai sai em MP3.
 
 import { getKey } from './or.mjs';
+import { resolveOut, open as openDir, dirOf } from './output.mjs';
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -62,10 +63,13 @@ export async function tts(o, key) {
   return { ok: true, bytes: buf, ext: o.format === 'mp3' ? 'mp3' : o.format };
 }
 
-export function saveAudio(result, outPathNoExt) {
+// Mesmo comportamento do save() (or.mjs): nome → ~/studio-output/<data>/;
+// caminho explícito respeitado. { open: true } abre a pasta.
+export function saveAudio(result, name, opts = {}) {
   if (!result.ok) { console.error(`  ✗ ${result.status}: ${result.detail}`); return null; }
-  const out = `${outPathNoExt}.${result.ext}`;
+  const out = `${resolveOut(name)}.${result.ext}`;
   fs.writeFileSync(out, result.bytes);
-  console.log(`  ✓ ${path.basename(out)} (${(result.bytes.length / 1024) | 0}KB)`);
+  console.log(`  ✓ ${out} (${(result.bytes.length / 1024) | 0}KB)`);
+  if (opts.open) openDir(dirOf(out));
   return out;
 }

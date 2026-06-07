@@ -68,5 +68,5 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   const { save } = await import('../lib/or.mjs');
   const p = process.argv[2] || 'a single rocket icon, geometric, cyan and dark blue';
   console.log(`▸ recraft-v4.1-pro-vector (SVG, sem texto, sem fundo) | "${p}"`);
-  save(await recraftV41ProVector({ prompt: p }), '/tmp/vector-out');
+  save(await recraftV41ProVector({ prompt: p }), 'vector-out', { open: true });
 }

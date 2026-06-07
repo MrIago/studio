@@ -11,6 +11,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { get } from './config.mjs';
+import { resolveOut, open as openDir, dirOf } from './output.mjs';
 
 const OR = 'https://openrouter.ai/api/v1';
 const KEY_CACHE = path.join(os.tmpdir(), 'studio-subkey.txt');
@@ -95,15 +96,25 @@ export async function generateImage(body, key) {
   return { ok: true, bytes, mime, ext: extFor(mime), cost: d.usage?.cost ?? null };
 }
 
-// Helper p/ salvar resultado em arquivo (uso nos scripts de teste).
-export function save(result, outPathNoExt) {
+// Salva o resultado. `name` sem caminho → ~/studio-output/<data>/; caminho
+// explícito (public/, absoluto, /tmp) → respeitado. Retorna o path salvo.
+// Passe { open: true } pra abrir a pasta ao salvar (1 arquivo). Pra LOTES,
+// não use open aqui — chame openOutput(dir) uma vez no fim (evita N janelas).
+export function save(result, name, opts = {}) {
   if (!result.ok) {
     console.error(`  ✗ ${result.reason}: ${result.detail}`);
     return null;
   }
-  const out = `${outPathNoExt}.${result.ext}`;
+  const base = resolveOut(name);
+  const out = `${base}.${result.ext}`;
   fs.writeFileSync(out, result.bytes);
   const cr = result.cost != null ? `~${Math.round(result.cost * 100)}cr` : '';
-  console.log(`  ✓ ${path.basename(out)} (${(result.bytes.length / 1024) | 0}KB) ${cr}`);
+  console.log(`  ✓ ${out} (${(result.bytes.length / 1024) | 0}KB) ${cr}`);
+  if (opts.open) openDir(dirOf(out));
   return out;
+}
+
+// abre a pasta do output no gerenciador de arquivos (chame 1x por lote).
+export function openOutput(dirOrFile) {
+  openDir(dirOrFile);
 }

@@ -1,10 +1,10 @@
 ---
 name: studio
-description: Estúdio de geração de mídia por IA via OpenRouter — gera e edita IMAGENS (qualidade premium, realismo com pessoas, ícones transparentes, logos SVG, paleta de marca, 65 estilos artísticos), compõe cenas fiéis com personagens/famosos a partir de fotos de referência, narração de VOZ (46 vozes em 18 idiomas com estilos expressivos e PT-BR) e MÚSICA instrumental. Cada modelo é uma caixa selada com opções completas e há um guia "qual modelo usar" por caso (qualidade vs rápido/barato, custo, velocidade). Use sempre que o usuário quiser gerar/editar imagem, criar ícone/logo/asset, fazer um post, compor uma cena com pessoa específica, gerar narração ou trilha sonora — mesmo que não diga "OpenRouter".
+description: Estúdio de geração de mídia por IA via OpenRouter — gera e edita IMAGENS (qualidade premium, realismo com pessoas, ícones transparentes, logos SVG, paleta de marca, 65 estilos artísticos), compõe cenas fiéis com personagens/famosos a partir de fotos de referência, narração de VOZ (30 vozes com emoção inline e diálogo multi-personagem), MÚSICA instrumental, e CRIA VÍDEO programático com Remotion (montando os assets gerados num MP4 — qualquer tipo, escrito sob medida). Cada modelo é uma caixa selada com opções completas e há um guia "qual modelo usar" por caso (qualidade vs rápido/barato, custo, velocidade). Use sempre que o usuário quiser gerar/editar imagem, criar ícone/logo/asset, fazer um post, compor uma cena com pessoa específica, gerar narração/trilha sonora, contar uma história com vozes, ou criar/montar um vídeo (demo, reels, carrossel animado, intro pra README) — mesmo que não diga "OpenRouter" ou "Remotion".
 license: MIT
 metadata:
   author: mriago
-  version: 0.1.0
+  version: 0.2.0
 ---
 
 # studio
@@ -12,7 +12,17 @@ metadata:
 Estúdio de **geração de mídia por IA** operado por linguagem natural. Gera e
 edita imagem, voz e música via OpenRouter — cada modelo numa **caixa selada**
 (`scripts/models/`) com opções completas, escolhido por um mapa "qual usar"
-testado na prática. (Vídeo IA e auto-editor entram em versões futuras.)
+testado na prática. Também **CRIA vídeo** (Remotion, programático) montando os
+assets gerados. (Gerar vídeo por IA — veo/seedance — entra em versão futura.)
+
+## CRIAR vídeo (Remotion) vs GERAR vídeo (IA)
+
+Quando o usuário pedir um **vídeo**, distinga:
+- **CRIAR** = Remotion (vídeo programático em React) — você escreve o código do
+  vídeo **sob medida** e monta os assets da studio (imagem/voz/música) num MP4.
+  Qualquer tipo de vídeo. **É o que a skill faz hoje.** → leia `references/criar-video.md`.
+- **GERAR** = IA (prompt→vídeo via veo/seedance) — ainda NÃO implementado aqui.
+  Se pedirem isso, avise que é versão futura (ou use a skill `openrouter-video`).
 
 ## Configuração (chave OpenRouter)
 
@@ -65,8 +75,19 @@ seedream/gemini. Veja velocidade em `references/velocidade.md`.
 | Ícone transparente pra asset/slide | gpt-5-image-mini ("flat vector style") | `gpt5ImageMini` |
 | SVG vetorial real (escala favicon→outdoor) | recraft-v4.1-pro-vector | `recraftV41ProVector` |
 | Fundo c/ paleta da marca + 65 styles | recraft-v3 | `recraftV3` |
-| Narração / voz | mai-voice-2 (46 vozes/18 idiomas + estilos) | `maiVoice2` |
+| Narração / voz | gemini-tts (30 vozes + tags de emoção inline) | `geminiTts` |
+| Diálogo / história com personagens | gemini-tts multi-voz | `geminiDialog` / `manyVoices` |
 | Música instrumental | lyria-3 (clip ~31s loop / pro ~2,6min trilha) | `lyria3` |
+| Transcrição (timestamps) | Groq whisper (grátis, sem GPU) | `transcribe` |
+
+**🎙️ Narração (gemini-tts)**: (1) **PADRÃO = automático** — mande o texto fluido
+(vírgulas leves, ponto final só onde o assunto vira; sem travessões/frases curtas à
+toa) e a voz adapta o tom sozinha. (2) **emoção por trecho = tags inline** no meio
+do texto: `[excited]`/`[whispers]`/`[laughs]`/`[serious]`/... — funciona num request
+só (diferente do SSML, que não dá). (3) **história/diálogo com personagens** →
+`geminiDialog` (2 vozes num request, precisa `GEMINI_API_KEY`) ou `manyVoices`
+(3+ personagens → 1 áudio por fala, encadeia). Cada personagem sua voz (das 30) +
+suas tags. Pra sincronizar com vídeo, transcreva com `transcribe()` → `[{start,end,text}]`.
 
 ## 3 padrões de ouro
 
@@ -92,8 +113,8 @@ Cada modelo é um `.mjs` em `scripts/models/` com opções completas. Importe do
 `index.mjs` ou rode via CLI. Exemplos:
 
 ```js
-import { gpt54Image2, seedream45, gpt5ImageMini, recraftV3,
-         recraftV41ProVector, maiVoice2, lyria3 } from './scripts/models/index.mjs';
+import { gpt54Image2, seedream45, gpt5ImageMini, recraftV3, recraftV41ProVector,
+         geminiTts, geminiDialog, manyVoices, lyria3 } from './scripts/models/index.mjs';
 import { save } from './scripts/lib/or.mjs';
 import { saveAudio } from './scripts/lib/audio.mjs';
 
@@ -109,14 +130,38 @@ save(await gpt54Image2({ prompt: 'componha estes no cenário X', refs }), 'cena'
 // gerar personagem copyright do zero (gpt recusa)
 save(await seedream45({ prompt: 'Bart Simpson giving a thumbs up' }), 'bart');
 
-// narração com voz PT-BR + estilo
-saveAudio(await maiVoice2({ input: 'Bem-vindo!', voice: 'pt-BR-Luana:MAI-Voice-2', style: 'excited' }), 'vo');
+// narração: automático + tags de emoção inline (PT-BR)
+saveAudio(await geminiTts({ input: '[excited] Bem-vindo ao studio! [whispers] o melhor estúdio.', voice: 'Sulafat' }), 'vo');
+
+// diálogo de 2 personagens (vozes distintas + emoção) — precisa GEMINI_API_KEY
+saveAudio(await geminiDialog({ speakers: [{ speaker: 'Ana', voice: 'Leda' }, { speaker: 'Rex', voice: 'Algenib' }],
+  script: 'Ana: [happy] Viu o que criei?\nRex: [amazed] Ficou incrível!' }), 'dialogo');
+
+// 3+ personagens → 1 áudio por fala (encadear no vídeo)
+const falas = await manyVoices([{ voice: 'Fenrir', text: '[shouting] Ao ataque!' }, { voice: 'Sulafat', text: '[warm] Calma.' }]);
 
 // música (pro = início/meio/fim; clip = loop curto)
 const m = await lyria3({ prompt: 'upbeat lofi, instrumental, no vocals', version: 'pro' });
 ```
 
-CLI rápido: `node scripts/models/<modelo>.mjs "prompt"` (gera em /tmp).
+CLI rápido: `node scripts/models/<modelo>.mjs "prompt"` (gera e abre a pasta).
+
+## Onde salva + visualizar
+
+`save()`/`saveAudio()` resolvem o destino:
+- **só um nome** (ex: `'rayan-taca'`) → `~/studio-output/<AAAA-MM-DD>/` (permanente, organizado por dia).
+- **caminho explícito** (`public/...`, absoluto, `/tmp`) → respeitado (ex: assets de vídeo vão pro `public/`).
+
+Passe `{ open: true }` pra **abrir a pasta** ao salvar (multi-OS: `open`/`explorer`/`xdg-open`).
+Em LOTES (carrossel) **não** ponha `open` em cada save — chame `openOutput(dir)` UMA vez
+no fim (senão abre N janelas). Override do diretório raiz: env `STUDIO_OUTPUT_DIR`.
+
+```js
+import { save, openOutput } from './scripts/lib/or.mjs';
+const dir = save(await gpt54Image2({ prompt }), 'slide-1');      // ~/studio-output/<data>/slide-1.png
+save(await gpt54Image2({ prompt: p2 }), 'slide-2');
+openOutput(dir);                                                 // abre a pasta uma vez
+```
 
 ## Refs i2i (imagem de referência)
 
@@ -130,6 +175,9 @@ web, PERGUNTE o link ao usuário (regra de ouro 3).
 - `references/velocidade.md` — ranking de velocidade de geração
 - `references/recraft-estilos.md` — 65 estilos do recraft-v3 + capacidades de paleta
 - `references/secrets.md` — configurar a chave OpenRouter
+- `references/criar-video.md` — **CRIAR vídeo (Remotion)**: fluxo, regras de ouro, integração com os assets
+- `references/remotion-official/` — doc oficial completa do Remotion (37 regras; comece pelo `SKILL.md`)
+- `references/remotion-gotchas.md` — armadilhas do Remotion que custaram tempo
 
 ## Scripts
 
@@ -138,3 +186,5 @@ web, PERGUNTE o link ao usuário (regra de ouro 3).
 - `scripts/lib/or.mjs` — plumbing OR (getKey, generateImage, save)
 - `scripts/lib/audio.mjs` — plumbing TTS/música (tts, pcmToWav, saveAudio)
 - `scripts/lib/config.mjs` — config da chave (`node config.mjs OPENROUTER_KEY=...`)
+- `video/scripts/render.mjs` — render headless de vídeo Remotion (abre o MP4 ao fim)
+- `video/examples/` — vídeos prontos de inspiração (não template — construa sob medida)

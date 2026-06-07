@@ -21,5 +21,5 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   const { save } = await import('../lib/or.mjs');
   const p = process.argv[2] || 'a red apple on a white table';
   console.log(`▸ gemini-2.5-flash (Nano Banana) | "${p}"`);
-  save(await gemini25Flash({ prompt: p }), '/tmp/gemini-out');
+  save(await gemini25Flash({ prompt: p }), 'gemini-out', { open: true });
 }

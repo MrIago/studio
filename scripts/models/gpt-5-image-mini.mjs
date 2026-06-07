@@ -31,5 +31,5 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   const { save } = await import('../lib/or.mjs');
   const p = process.argv[2] || 'a glowing blue microphone icon, transparent background';
   console.log(`▸ gpt-5-image-mini (transparente) | "${p}"`);
-  save(await gpt5ImageMini({ prompt: p, transparent: true }), '/tmp/gptmini-out');
+  save(await gpt5ImageMini({ prompt: p, transparent: true }), 'gptmini-out', { open: true });
 }

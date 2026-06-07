@@ -25,5 +25,5 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   const { save } = await import('../lib/or.mjs');
   const p = process.argv[2] || 'a red apple on a white table';
   console.log(`▸ seedream-4.5 | "${p}"`);
-  save(await seedream45({ prompt: p }), '/tmp/seedream-out');
+  save(await seedream45({ prompt: p }), 'seedream-out', { open: true });
 }
