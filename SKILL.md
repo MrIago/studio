@@ -24,12 +24,25 @@ Quando o usuário pedir um **vídeo**, distinga:
 - **GERAR** = IA (prompt→vídeo via veo/seedance) — ainda NÃO implementado aqui.
   Se pedirem isso, avise que é versão futura (ou use a skill `openrouter-video`).
 
-## Configuração (chave OpenRouter)
+## Configuração / primeiro uso
 
-Precisa de uma chave OpenRouter. O usuário fornece. Leia `references/secrets.md`.
-Resumo: `node ${CLAUDE_SKILL_DIR}/scripts/lib/config.mjs OPENROUTER_KEY=sk-or-...`
-(salva em `~/.config/studio/.env`), ou exporte `OPENROUTER_KEY` no ambiente.
-Nunca commite a chave. Custo: `usage.cost × 100` = créditos (1cr = 1¢ USD).
+**ANTES de gerar qualquer coisa, garanta que a chave existe.** Se o usuário acabou
+de instalar, ou se uma geração falhar por falta de key, rode o setup (mostra o que
+falta e como resolver):
+
+```bash
+node ${CLAUDE_SKILL_DIR}/scripts/setup.mjs                          # vê o status
+node ${CLAUDE_SKILL_DIR}/scripts/setup.mjs OPENROUTER_KEY=sk-or-... # salva a chave
+```
+
+Chaves (em `~/.config/studio/.env`, privado):
+- **`OPENROUTER_KEY`** (obrigatória) — imagem, música. Pegue em openrouter.ai/keys.
+- **`GEMINI_API_KEY`** (voz) — narração + diálogo multi-personagem. aistudio.google.com/apikey.
+- **`GROQ_API_KEY`** (vídeo) — transcrição p/ sincronizar narração. console.groq.com/keys (grátis).
+
+Quando o usuário pedir algo e faltar a chave, NÃO falhe silenciosamente — rode
+`setup.mjs` e mostre a ele o que configurar. Nunca commite chave. Custo:
+`usage.cost × 100` = créditos (1cr = 1¢ USD). Detalhe em `references/secrets.md`.
 
 ## Regra de PROMPT (importante)
 
@@ -202,6 +215,8 @@ web, PERGUNTE o link ao usuário (regra de ouro 3).
 - `scripts/models/index.mjs` — reexporta tudo + tabela `QUAL_USAR` programática
 - `scripts/lib/or.mjs` — plumbing OR (getKey, generateImage, save)
 - `scripts/lib/audio.mjs` — plumbing TTS/música (tts, pcmToWav, saveAudio)
-- `scripts/lib/config.mjs` — config da chave (`node config.mjs OPENROUTER_KEY=...`)
+- `scripts/setup.mjs` — **setup / primeiro uso**: status das chaves + configura (`node setup.mjs` ou `setup.mjs OPENROUTER_KEY=...`)
+- `scripts/lib/config.mjs` — config raw da chave (usado pelo setup)
+- `video/scripts/setup.mjs` — instala a engine Remotion (1x, só p/ vídeo)
 - `video/scripts/render.mjs` — render headless de vídeo Remotion (abre o MP4 ao fim)
 - `video/examples/` — vídeos prontos de inspiração (não template — construa sob medida)
