@@ -17,6 +17,18 @@ Não se cria um projeto Remotion por vídeo. Há **um workspace só**, em
   `npm install` SÓ se o package.json mudou. Não apaga seus vídeos nem node_modules.
 - `preview.mjs` e `render.mjs` já chamam o setup sozinhos se preciso e rodam no workspace.
 
+### 🔒 Cada vídeo é ISOLADO e PERMANENTE — nunca sobrescreva outro projeto
+
+- **Código** → `src/videos/<nome>/` (uma pasta por vídeo). **Assets** →
+  `public/<nome>/` (isolados — sempre prefixe os assets com a pasta do projeto,
+  ex: `staticFile("<nome>/bg.jpg")`). **MP4 final** → `~/studio/<nome>/<nome>.mp4`.
+- Vídeo NOVO = **pasta NOVA** (`src/videos/<novo>/` + `public/<novo>/`) + 1 linha no
+  `src/Root.tsx` (import + entrada no array). NUNCA reuse a pasta/assets de um vídeo
+  existente — senão sobrescreve. Editar um vídeo antigo = abrir o preview e mexer
+  no `.tsx` dele (os assets já estão lá, nada se perde).
+- Antes de criar assets pra um vídeo novo, confira se a pasta `public/<nome>/` já
+  existe (projeto anterior) e escolha outro nome se for um vídeo diferente.
+
 ### Blocos de componentes (estilo shadcn) — NÃO uma lib fechada
 
 `~/.studio-engine/src/components/` tem blocos por categoria (backgrounds, text,
@@ -117,22 +129,42 @@ render: o preview é onde o usuário decide.
 Fluxo: **escreva o texto completo → marque emoções com tags onde fizer sentido →
 gere (automático + tags numa faixa; ou multi-voz se tem personagens).**
 
-## Sincronizar os beats com a fala (transcrição)
+## 🎯 WORKFLOW OBRIGATÓRIO p/ vídeo com narração (nunca pule isto)
 
-Narração contínua → você não sabe onde cada frase cai. Use a **caixa de STT**
-(`scripts/lib/transcribe.mjs`) pra obter `[{start, end, text}]` e cravar os
-`from/to` de cada `<Sequence>` nos tempos REAIS:
+Vídeo com voz over **DESALINHA** se você chutar os tempos das cenas. A regra de
+ferro, comprovada na prática:
+
+1. **Gere a narração** (uma faixa por bloco, gemini-tts) e **TRANSCREVA cada uma**
+   com `transcribe()` → salve os `segments.json`. Você terá `[{start,end,text}]`.
+2. **Cada cena usa o timestamp REAL** da frase que ela ilustra — nunca um número
+   inventado. Ex: a narração diz "o GPT usa" em `[12.0→18.2]` → a cena do gpt-5.4
+   é `from:12, dur:7`. A cena aparece QUANDO a voz a menciona.
+3. **CONSTRUA BLOCO A BLOCO.** Faça SÓ a abertura → renderize → valide (transcreva
+   o áudio do bloco e confira que casa) → mostre ao usuário → aprovado, próximo
+   bloco. NUNCA tente o vídeo inteiro de uma vez: erros de sync viram um caos
+   impossível de depurar. Um bloco certo de cada vez.
+4. **Valide o áudio de cada bloco renderizando + transcrevendo** — se a transcrição
+   do render bate com o roteiro (sem sobreposição), está certo. O preview pode
+   ENGANAR (timeline mostra faixas empilhadas mesmo quando o render está correto);
+   a verdade é o MP4 renderizado.
+5. **Áudio que não respeita Sequence?** Use `<Audio>` do core `remotion`, NUNCA do
+   `@remotion/media` (esse ignora o `from` do Sequence → toca tudo no frame 0).
+6. **Amostras de áudio (vozes/idiomas tocando)**: uma por vez, `at` espaçado MAIOR
+   que a duração de cada áudio, e `durationInFrames` na Sequence cortando antes do
+   próximo. E nunca toque amostra POR CIMA da narração — amostras só depois que a
+   narração daquele trecho terminou.
+
+### A caixa de STT
+
+`scripts/lib/transcribe.mjs` → `[{start, end, text}]` (segundos). Usa **Groq**
+(grátis ~8h/dia, sem GPU; `GROQ_API_KEY` em console.groq.com/keys). É só pra
+TIMESTAMPS; erros de grafia ("Cloud Code") não afetam o áudio.
 
 ```js
 import { transcribe, formatTranscript } from '../scripts/lib/transcribe.mjs';
-const segs = await transcribe('public/narration.mp3'); // [{start,end,text}] em segundos
-// use segs[i].start/end pra definir os from/to dos beats no src/
+const segs = await transcribe('public/<proj>/narr-1.wav'); // [{start,end,text}]
+// segs[i].start/end → from/dur de cada <Sequence>
 ```
-
-STT usa **Groq** (grátis ~8h/dia, sem GPU) — configure `GROQ_API_KEY`
-(`node scripts/lib/config.mjs GROQ_API_KEY=gsk_...`, pegue em console.groq.com/keys).
-A transcrição é só pra TIMESTAMPS; erros de grafia (ex: "Cloud Code") não afetam
-o áudio falado.
 
 ## Integração com as caixas seladas (assets)
 

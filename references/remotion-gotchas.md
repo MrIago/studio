@@ -51,3 +51,4 @@ Fallback 100% por código: **GIF clicável** (`<img>` dentro de `<a href=mp4>`).
 ## Debug criativo
 
 Pra checar o que um TTS realmente falou (pausas, repetições), transcreva o MP3 com faster-whisper local — útil quando um áudio sai mais longo que o esperado.
+- **Áudio NÃO respeita Sequence?** Use `<Audio>` do core `remotion`, NÃO do `@remotion/media`. O do @remotion/media IGNORA o `from` do `<Sequence>` pai e toca desde o frame 0 (causa narrações/áudios todos empilhados no início). O core respeita o Sequence e desloca certo.
