@@ -34,7 +34,7 @@ Fallback 100% por código: **GIF clicável** (`<img>` dentro de `<a href=mp4>`).
 - **TTS (`gemini-tts`)**: PADRÃO da skill. Tags de emoção inline (`[excited]`/`[whispers]`) num request; multi-voz (`geminiDialog`) só com `GEMINI_API_KEY` (a OR não roteia multi-speaker → 404). Texto com travessão/reticência/frase curta à toa cria SILÊNCIO (picota). Saída PCM → WAV.
 - **Música (`lyria-3`)**: `stream:true` é OBRIGATÓRIO (senão 400). Áudio nos chunks SSE como `delta.audio.data` base64. **O stream tem linhas keep-alive `: OPENROUTER PROCESSING`** antes do áudio — ignore (não começam com `data:`). **Às vezes a 1ª tentativa volta vazia (0KB)** → SEMPRE valide `buf.length` e dê retry (até 3×). O `generate-audio.mjs` já faz isso.
 - **SFX (whoosh/ding) precisam existir em `public/`** antes do render, senão `<Audio src="whoosh.wav">` quebra. O `generate-audio.mjs` baixa-os de `remotion.media`. Se gerar áudio à parte, baixe os SFX também.
-- Chave: nunca commitar; passar via env; revogar se vazar.
+- Chave: nunca commitar em repo público; passar via env / `~/.config/studio/.env`.
 
 ## Áudio faltante quebra o render
 

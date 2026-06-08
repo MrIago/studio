@@ -43,9 +43,7 @@ node ${CLAUDE_SKILL_DIR}/scripts/lib/config.mjs OPENROUTER_PROVISIONING_KEY=sk-o
 
 ## Segurança
 
-- **Nunca commite a chave** nem a coloque em código. `~/.config/studio/.env` e
-  `.env` já são privados.
-- Se uma chave vazar (apareceu num chat, log, etc), **revogue** em
-  https://openrouter.ai/keys e gere outra.
+- **Nunca commite a chave** em repositório público nem a coloque em código
+  versionado. `~/.config/studio/.env` e `.env` já são privados (gitignored).
 - Custo: cada geração desconta da chave. `usage.cost × 100` = créditos (1cr = 1¢ USD).
   Imagem ~4-24cr · voz/música ~1-8cr.
