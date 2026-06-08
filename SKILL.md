@@ -146,22 +146,37 @@ const m = await lyria3({ prompt: 'upbeat lofi, instrumental, no vocals', version
 
 CLI rápido: `node scripts/models/<modelo>.mjs "prompt"` (gera e abre a pasta).
 
-## Onde salva + visualizar
+## Onde salva (por PROJETO) + visualizar
 
-`save()`/`saveAudio()` resolvem o destino:
-- **só um nome** (ex: `'rayan-taca'`) → `~/studio-output/<AAAA-MM-DD>/` (permanente, organizado por dia).
-- **caminho explícito** (`public/...`, absoluto, `/tmp`) → respeitado (ex: assets de vídeo vão pro `public/`).
+Tudo que a studio gera (imagem, ícone, post, áudio, vídeo) vai pra
+**`~/studio/<projeto>/`** — um lugar só, organizado por projeto. **No começo de
+uma geração, defina o nome do projeto pelo pedido** (descritivo: `carrossel-vasco`,
+`icones-app`, `post-natal`) via env `STUDIO_PROJECT`. Mesma conversa reusa o mesmo;
+pedido novo/diferente = projeto novo.
 
-Passe `{ open: true }` pra **abrir a pasta** ao salvar (multi-OS: `open`/`explorer`/`xdg-open`).
-Em LOTES (carrossel) **não** ponha `open` em cada save — chame `openOutput(dir)` UMA vez
-no fim (senão abre N janelas). Override do diretório raiz: env `STUDIO_OUTPUT_DIR`.
+```bash
+# defina UMA vez por geração (no comando que roda o script .mjs):
+STUDIO_PROJECT="carrossel-vasco" node gerar.mjs
+```
+
+`save(name)`/`saveAudio(name)` resolvem:
+- **só um nome** (`'slide-1'`) → `~/studio/<STUDIO_PROJECT>/slide-1.png`
+- **"projeto/arquivo"** (`'icones-app/rocket'`) → `~/studio/icones-app/rocket.png`
+- **caminho explícito** (absoluto, `/tmp`) → respeitado
+
+`{ open: true }` abre a pasta ao salvar (multi-OS). Em LOTES, não ponha em cada
+save — chame `openOutput(dir)` UMA vez no fim. Override da raiz: env `STUDIO_HOME`.
 
 ```js
 import { save, openOutput } from './scripts/lib/or.mjs';
-const dir = save(await gpt54Image2({ prompt }), 'slide-1');      // ~/studio-output/<data>/slide-1.png
+const dir = save(await gpt54Image2({ prompt }), 'slide-1');   // ~/studio/<projeto>/slide-1.png
 save(await gpt54Image2({ prompt: p2 }), 'slide-2');
-openOutput(dir);                                                 // abre a pasta uma vez
+openOutput(dir);                                              // abre a pasta uma vez
 ```
+
+**Vídeo**: a engine Remotion vive separada em `~/.studio-engine/` (oculta, técnica —
+você não mexe). `render.mjs` renderiza lá e **copia o MP4 final pro projeto** em
+`~/studio/<projeto>/` (onde está todo o resto). Ver `references/criar-video.md`.
 
 ## Refs i2i (imagem de referência)
 
@@ -176,8 +191,10 @@ web, PERGUNTE o link ao usuário (regra de ouro 3).
 - `references/recraft-estilos.md` — 65 estilos do recraft-v3 + capacidades de paleta
 - `references/secrets.md` — configurar a chave OpenRouter
 - `references/criar-video.md` — **CRIAR vídeo (Remotion)**: fluxo, regras de ouro, integração com os assets
+- `references/motion-design.md` — vocabulário de motion design PRO (técnicas dos 21 prompts oficiais)
 - `references/remotion-official/` — doc oficial completa do Remotion (37 regras; comece pelo `SKILL.md`)
 - `references/remotion-gotchas.md` — armadilhas do Remotion que custaram tempo
+- `video/examples/showcase/` — 21 prompts oficiais por categoria (inspiração, NÃO template)
 
 ## Scripts
 

@@ -1,44 +1,61 @@
-// Output organizado + abrir a pasta automaticamente.
-// As caixas geram mídia; este helper decide ONDE salvar e ABRE pra você ver.
+// Output organizado por PROJETO. TUDO que a studio gera (imagem, ícone, post,
+// áudio, vídeo…) vai pra ~/studio/<projeto>/. Um lugar só, por projeto.
 //
-// Regras de path:
-//  - caminho ABSOLUTO ou que começa com ./ ou ../ ou public/  → respeita (ex: assets de vídeo)
-//  - só um NOME (ex: "rayan-taca")  → salva em ~/studio-output/<data>/ (permanente, organizado)
-// Ao terminar um lote, chame openDir(dir) uma vez pra abrir a pasta no gerenciador.
+//   ~/studio/
+//   ├── carrossel-vasco/   ← imagens do carrossel
+//   ├── icones-app/        ← ícones
+//   └── intro-skill/       ← assets + o MP4 final do vídeo
+//
+// O PROJETO é nomeado pelo pedido: a skill seta STUDIO_PROJECT="carrossel-vasco"
+// no começo de uma geração (mesma conversa reusa; pedido novo = pasta nova).
+//
+// (A engine de vídeo Remotion vive separada em ~/.studio-engine/ — técnica,
+//  oculta. O render copia o MP4 final pra cá, ~/studio/<projeto>/.)
+//
+// save(name):
+//  - caminho ABSOLUTO / ./ / ../ / /tmp  → respeitado
+//  - "projeto/arquivo"  → ~/studio/projeto/arquivo
+//  - só "arquivo"       → ~/studio/<STUDIO_PROJECT ou 'avulsos'>/arquivo
 
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { execFile } from 'node:child_process';
 
-export const OUTPUT_ROOT = process.env.STUDIO_OUTPUT_DIR
-  || path.join(os.homedir(), 'studio-output');
+// raiz dos OUTPUTS (permanente). Override: env STUDIO_HOME.
+export const STUDIO_HOME = process.env.STUDIO_HOME || path.join(os.homedir(), 'studio');
 
-// resolve onde salvar a partir do que o chamador passou (sem extensão).
+// projeto "atual" — a skill define via env STUDIO_PROJECT (nome do pedido).
+function currentProject() {
+  return (process.env.STUDIO_PROJECT || 'avulsos').replace(/[^a-zA-Z0-9._-]/g, '-');
+}
+
+// resolve onde salvar (sem extensão).
 export function resolveOut(nameOrPath) {
   const p = String(nameOrPath);
-  // já é um caminho explícito → respeita (vídeo usa public/, etc)
-  if (path.isAbsolute(p) || p.startsWith('./') || p.startsWith('../')
-      || p.startsWith('public/') || p.startsWith('public' + path.sep)
-      || p.startsWith('/tmp')) {
+  if (path.isAbsolute(p) || p.startsWith('./') || p.startsWith('../') || p.startsWith('/tmp')) {
     return p;
   }
-  // só um nome → pasta organizada por data
-  const day = new Date().toISOString().slice(0, 10); // YYYY-MM-DD (UTC; suficiente)
-  const dir = path.join(OUTPUT_ROOT, day);
-  fs.mkdirSync(dir, { recursive: true });
-  return path.join(dir, p);
+  const rel = p.includes('/') ? p : path.join(currentProject(), p);
+  const full = path.join(STUDIO_HOME, rel);
+  fs.mkdirSync(path.dirname(full), { recursive: true });
+  return full;
 }
 
-// abre um arquivo ou pasta no app padrão do SO. Chame UMA vez ao fim de um lote.
+// pasta de um projeto (cria se não existe).
+export function projectDir(name) {
+  const dir = path.join(STUDIO_HOME, String(name).replace(/[^a-zA-Z0-9._-]/g, '-'));
+  fs.mkdirSync(dir, { recursive: true });
+  return dir;
+}
+
+// abre arquivo/pasta no app padrão do SO (multi-OS). Chame 1x ao fim de um lote.
 export function open(target) {
   const cmd = process.platform === 'darwin' ? 'open'
-    : process.platform === 'win32' ? 'explorer'
-    : 'xdg-open';
-  execFile(cmd, [target], () => {}); // best-effort; ignora erro (headless/sem GUI)
+    : process.platform === 'win32' ? 'explorer' : 'xdg-open';
+  execFile(cmd, [target], () => {});
 }
 
-// pasta onde um arquivo salvo está (pra abrir o diretório, não o arquivo).
 export function dirOf(filePath) {
   return path.dirname(path.resolve(filePath));
 }

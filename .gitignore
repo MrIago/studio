@@ -5,3 +5,5 @@ __pycache__/
 # saídas de teste
 out/
 *.tmp
+video/workspace-template/node_modules/
+video/workspace-template/out/
