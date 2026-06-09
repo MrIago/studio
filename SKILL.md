@@ -87,11 +87,18 @@ seedream/gemini. Veja velocidade em `references/velocidade.md`.
 | Gerar personagem copyright do zero (gpt recusa) | seedream / recraft-v3 | `seedream45` |
 | Ícone transparente pra asset/slide | gpt-5-image-mini ("flat vector style") | `gpt5ImageMini` |
 | SVG vetorial real (escala favicon→outdoor) | recraft-v4.1-pro-vector | `recraftV41ProVector` |
+| Animação vetorial leve (logo/loader/data-viz p/ site, app ou camada de vídeo) | Lottie (escrito à mão, validado no Remotion) | `lottie` / `svgToLottie` |
 | Fundo c/ paleta da marca + 65 styles | recraft-v3 | `recraftV3` |
 | Narração / voz | gemini-tts (30 vozes + tags de emoção inline) | `geminiTts` |
 | Diálogo / história com personagens | gemini-tts multi-voz | `geminiDialog` / `manyVoices` |
 | Música instrumental | lyria-3 (clip ~31s loop / pro ~2,6min trilha) | `lyria3` |
 | Transcrição (timestamps) | Groq whisper (grátis, sem GPU) | `transcribe` |
+
+**🎬 Lottie vs SVG vs vídeo (como decidir)**: *anima?* não → SVG estático
+(`recraftV41ProVector`) ou PNG (`gpt5ImageMini`). sim, **single-scene curto** p/
+web/app ou **camada** de vídeo → **Lottie** (`lottie`, ou `svgToLottie` p/ animar um
+SVG). sim, **vídeo multi-shot com áudio** → **Remotion** (`criar-video.md`). O Lottie
+você ESCREVE (não é API) — ver `references/lottie.md`.
 
 **🎙️ Narração (gemini-tts)**: (1) **PADRÃO = automático** — mande o texto fluido
 (vírgulas leves, ponto final só onde o assunto vira; sem travessões/frases curtas à
@@ -199,10 +206,11 @@ web, PERGUNTE o link ao usuário (regra de ouro 3).
 
 ## Leia a reference do passo
 
-- `references/qual-usar.md` — mapa completo de qual modelo por caso (qualidade/custo/velocidade)
+- `references/qual-usar.md` — mapa de qual modelo de IMAGEM por caso (qualidade/custo/velocidade); voz/música/Lottie ver tabela acima
 - `references/velocidade.md` — ranking de velocidade de geração
 - `references/recraft-estilos.md` — 65 estilos do recraft-v3 + capacidades de paleta
 - `references/secrets.md` — configurar a chave OpenRouter
+- `references/lottie.md` — **Lottie** (animação vetorial leve): regras Skottie, builders, conversor SVG, render
 - `references/criar-video.md` — **CRIAR vídeo (Remotion)**: fluxo, regras de ouro, integração com os assets
 - `references/motion-design.md` — vocabulário de motion design PRO (técnicas dos 21 prompts oficiais)
 - `references/remotion-official/` — doc oficial completa do Remotion (37 regras; comece pelo `SKILL.md`)
@@ -211,7 +219,7 @@ web, PERGUNTE o link ao usuário (regra de ouro 3).
 
 ## Scripts
 
-- `scripts/models/*.mjs` — 9 caixas seladas (7 imagem + voz + música)
+- `scripts/models/*.mjs` — 9 caixas seladas (7 imagem + voz/gemini-tts + música/lyria-3); index.mjs também reexporta transcrição + Lottie (`lottie`/`svgToLottie`, de `scripts/lib/`)
 - `scripts/models/index.mjs` — reexporta tudo + tabela `QUAL_USAR` programática
 - `scripts/lib/or.mjs` — plumbing OR (getKey, generateImage, save)
 - `scripts/lib/audio.mjs` — plumbing TTS/música (tts, pcmToWav, saveAudio)

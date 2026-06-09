@@ -20,11 +20,17 @@ import { useFade } from "../../components/hooks/motion";
 
 ## Categorias (cresça à vontade)
 
-- **backgrounds/** — `LiveBg` (gradiente respirando), `ImageBg` (Ken Burns), `Particles`
-- **text/** — `BigTitle` (pop-in + glow), `GlitchText` (RGB glitch)
+- **backgrounds/** — `LiveBg` (gradiente respirando), `ImageBg` (Ken Burns), `Particles`,
+  `FloatingIcons` (PNGs em stagger + flutuação contínua), `Gallery` (grid de imagens)
+- **text/** — `BigTitle` (pop-in + glow), `GlitchText` (RGB glitch), `FeatureSolo` (destaque de 1 feature)
 - **hud/** — `Corners` (brackets), `Scanner` (linha varrendo), `CinematicOverlay` (vignette+scanlines)
-- **audio/** — `AudioBars` (espectro reativo à música)
+- **audio/** — `AudioBars` (espectro reativo à música), `PlayPill` (botão play + waveform reativa)
+- **ui/** — `WindowFrame` (janela macOS), `Typewriter` (texto digitando), `CodeLine` (linha de código)
 - **3d/** — `MetalKnot` (torus knot metálico + órbitas; requer WebGL no render)
+- **lottie/** — `LottieLayer` (toca um `.json` Lottie como camada de vídeo). Pra
+  GERAR o Lottie use a caixa `lottie`/`svgToLottie` (ver `references/lottie.md`); pra
+  render isolado .json→MP4 use a composição `src/videos/lottie-box/`. Lottie =
+  single-scene curto/vetorial; vídeo multi-shot = Remotion normal.
 - **hooks/** — `motion.ts` (`useEnter`, `useFade`), `palette.ts`
 
 ## Criando um bloco novo
@@ -33,7 +39,14 @@ import { useFade } from "../../components/hooks/motion";
 2. Anime SEMPRE por `useCurrentFrame()` — nunca CSS animation/transition nem
    `useFrame` do fiber (não renderizam / dão flicker).
 3. Aceite props pra cor/tamanho/timing (reutilizável). Comente o que faz no topo.
-4. Documente 1 linha aqui. Pronto — virou repertório permanente.
+4. Documente 1 linha aqui.
+
+> ⚠️ **Onde criar pra ser PERMANENTE:** esta engine (`~/.studio-engine/src/components/`)
+> é um espelho descartável — o `setup.mjs` a regenera do template da skill a cada
+> rodada (é assim que correções de blocos chegam via `/plugin update`). Um bloco
+> reutilizável que você queira manter deve ser criado na FONTE versionada da skill:
+> `video/workspace-template/src/components/<categoria>/`. Bloco criado só aqui na
+> engine é efêmero (vale pro vídeo atual, some no próximo setup).
 
 ## shadcn/ui (UI em vídeos de produto/demo)
 

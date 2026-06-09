@@ -1,5 +1,5 @@
 // Bootstrap idempotente do workspace Remotion da studio.
-// Cria/atualiza ~/studio/_workspace/ a partir do template da skill, SEM apagar
+// Cria/atualiza ~/.studio-engine/ (oculta) a partir do template da skill, SEM apagar
 // node_modules nem os seus vídeos. Roda npm install só se o package.json mudou.
 //
 //   node video/scripts/setup.mjs
@@ -10,6 +10,7 @@
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { createHash } from 'node:crypto';
 import { execSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
@@ -20,7 +21,10 @@ const WS = process.env.STUDIO_ENGINE || path.join(os.homedir(), '.studio-engine'
 
 // copia recursiva preservando o que o usuário criou. Sobrescreve componentes/
 // config/package (são "da skill"); NÃO toca em src/videos/ do usuário, node_modules, out, public.
-const SKILL_OWNED = ['package.json', 'tsconfig.json', 'remotion.config.ts', 'src/index.ts', 'src/Root.tsx', 'src/components'];
+// Arquivos "da skill" — sempre re-sincronizados (NÃO toca em src/videos/<user>, node_modules, out, public).
+// src/videos/lottie-box é da skill (composição de render isolado de Lottie) → re-sincroniza.
+// O Root.tsx é auto-discovery (require.context do webpack) → pode sobrescrever sem apagar vídeos do user.
+const SKILL_OWNED = ['package.json', 'tsconfig.json', 'remotion.config.ts', 'src/index.ts', 'src/Root.tsx', 'src/components', 'src/videos/lottie-box'];
 
 function copyInto(srcDir, dstDir) {
   fs.mkdirSync(dstDir, { recursive: true });
@@ -60,12 +64,12 @@ function main() {
   const pkgHashFile = path.join(WS, '.pkg-hash');
   const pkgContent = fs.readFileSync(path.join(WS, 'package.json'), 'utf8');
   const prevHash = fs.existsSync(pkgHashFile) ? fs.readFileSync(pkgHashFile, 'utf8') : '';
-  const curHash = String(pkgContent.length) + ':' + pkgContent.slice(0, 200);
+  const curHash = createHash('sha1').update(pkgContent).digest('hex'); // hash do conteúdo INTEIRO (pega bump de versão de mesmo tamanho)
   const needInstall = firstTime || !fs.existsSync(path.join(WS, 'node_modules')) || prevHash !== curHash;
 
   if (needInstall) {
     console.log('▸ npm install no workspace (1ª vez ou deps mudaram)…');
-    // --legacy-peer-deps: @react-three/fiber declara peer react<19, mas roda com 19
+    // --legacy-peer-deps: defensivo. Hoje React 18 + @react-three/fiber 8.x (peer >=18) não conflita; mantido pra robustez se as versões subirem
     execSync('npm install --legacy-peer-deps', { cwd: WS, stdio: 'inherit' });
     fs.writeFileSync(pkgHashFile, curHash);
   } else {

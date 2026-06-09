@@ -29,13 +29,14 @@ sai mais caro que acertar de primeira no gpt. Qualidade/confiabilidade > centavo
 | **Gerar personagem copyright DO ZERO** (gpt recusa: Mickey/Pikachu/Bart) | **seedream-4.5** | recraft-v3 | ~4cr | ⚡ |
 | **Transparente / ÍCONE pra asset** (overlay, slide) | **gpt-5-image-mini** (prompt "flat vector style, like SVG icon") | — | ~4cr | 🐌 37s |
 | **SVG vetorial REAL** (só se precisa escala favicon→outdoor) | **recraft-v4.1-pro-vector** | ⚠️ bug: branco em espaço negativo (furo) não some | ~30cr | ⚡ 13s |
+| **Animação vetorial leve** (logo/loader/data-viz · web/app ou camada de vídeo) | **Lottie** (`lottie`/`svgToLottie`) | Claude ESCREVE o JSON (não é API); valida no render Remotion; `.json` leve | grátis | ⚡ |
 | **Fundo c/ paleta da marca + 65 styles + texto posicionado** | **recraft-v3** (`style` + `text_layout` + `rgb_colors`) | — | ~4cr | ⚡ |
 | **Paleta de cores forçada** (sem style) | qualquer **recraft** (todos têm `rgb_colors`) | — | 4–30cr | ⚡ |
 | ❌ **NUNCA pra editar** | recraft-v4* (ignora ref, troca o personagem) | — | — | — |
 
-**Regra rápido+barato (resolvida):** estilo pedido ESTÁ na lista do recraft → **recraft-v3** (param dedicado + paleta). Estilo NÃO está → **grok-imagine** (mais rápido, genérico). Lista de estilos = `RECRAFT-ESTILOS.md`.
+**Regra rápido+barato (resolvida):** estilo pedido ESTÁ na lista do recraft → **recraft-v3** (param dedicado + paleta). Estilo NÃO está → **grok-imagine** (mais rápido, genérico). Lista de estilos = `references/recraft-estilos.md`.
 
-**Velocidade é o 3º eixo de decisão**: gpt-5.4 (melhor qualidade) custa 150s (2,5min); rápido = recraft-v3/grok/gemini/seedream (3–9s, ~18× mais rápido). Tabela completa: `VELOCIDADE.md`.
+**Velocidade é o 3º eixo de decisão**: gpt-5.4 (melhor qualidade) custa 150s (2,5min); rápido = recraft-v3/grok/gemini/seedream (3–9s, ~18× mais rápido). Tabela completa: `references/velocidade.md`.
 
 ## ⭐ Padrões de ouro (regras transversais)
 
@@ -86,7 +87,7 @@ sai mais caro que acertar de primeira no gpt. Qualidade/confiabilidade > centavo
 
 - Endpoint: `POST /api/v1/chat/completions`. Imagem em `choices[0].message.images[0].image_url.url` (data URI).
 - `modalities`: `[image,text]` (gpt, gemini) · `[image]` (seedream, recraft, flux).
-- i2i: `content` = array. gpt: texto 1º, imagens depois. seedream: imagens 1º, texto depois.
+- i2i: `content` = array, sempre texto 1º depois as imagens (gpt, seedream, gemini — todas text-first).
 - `image_config`: `{aspect_ratio, image_size}`. recraft-v3 tb: `style`, `rgb_colors`.
 - Custo: `usage.cost × 100` = créditos (1cr = 1¢).
 - ⚠️ Key do Lasy é PROVISIONING (só gerencia) — criar sub-key de inferência via

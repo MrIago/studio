@@ -1,4 +1,5 @@
-// gemini-tts — CAIXA SELADA (TTS). Google Gemini 3.1 Flash TTS. O PADRÃO de voz.
+// gemini-tts — CAIXA SELADA (TTS). Google Gemini Flash TTS. O PADRÃO de voz.
+// (backend nativo: gemini-2.5-flash-preview-tts; via OpenRouter: modelo TTS do Gemini.)
 // 30 vozes, multilíngue (PT-BR bom), e o diferencial: TAGS DE EMOÇÃO INLINE
 // ([excited]/[whispers]/[laughs]/...) que mudam o tom no meio do texto — e
 // MULTI-PERSONAGEM (várias vozes num diálogo). ~1cr.

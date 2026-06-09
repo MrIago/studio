@@ -77,15 +77,12 @@ async function lyria3Once(o, key) {
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
-  const { save } = await import('../lib/or.mjs');
+  const { saveAudio } = await import('../lib/audio.mjs');
   const prompt = process.argv[2] || 'Upbeat electronic tech background music, driving beat, instrumental, no vocals';
   const version = process.argv[3] === 'pro' ? 'pro' : 'clip';
   console.log(`▸ lyria-3 (${version}) | "${prompt}"`);
-  // música é mp3 mas usa o `save` do or.mjs (grava bytes + ext)
   const r = await lyria3({ prompt, version });
-  if (r.ok) {
-    const fs = await import('node:fs');
-    fs.writeFileSync('/tmp/lyria-out.mp3', r.bytes);
-    console.log(`  ✓ lyria-out.mp3 (${(r.bytes.length/1024)|0}KB) ~${Math.round((r.cost||0)*100)}cr`);
-  } else console.error(`  ✗ ${r.detail}`);
+  // salva em ~/studio/<projeto>/ e abre a pasta (mesma convenção das outras caixas)
+  if (r.ok) saveAudio(r, process.argv[4] || 'lyria-out', { open: true });
+  else console.error(`  ✗ ${r.detail}`);
 }

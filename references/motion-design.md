@@ -16,7 +16,7 @@ o vocabulário pra subir o nível.
 - **React/JSX/CSS/SVG** (base) · **Tailwind** (`@remotion/tailwind`)
 - **Ícones**: lucide-react, react-icons — importa como componente e anima
 - **3D**: `@remotion/three` (React Three Fiber) — SVG/objeto 3D, material metálico, luz
-- **Lottie**: `@remotion/lottie` — animações de designer (After Effects)
+- **Lottie**: `@remotion/lottie` (bloco `LottieLayer`) — animação vetorial leve como camada; gere com a caixa `lottie`/`svgToLottie` → `references/lottie.md`
 - **Transições**: `@remotion/transitions` — slide, wipe, clock, iris, fade
 - **Effects** (37 nativos): glow, blur, chromaticAberration, lightLeak, noise, vignette,
   halftone, duotone, scanlines, dropShadow, hue, grayscale, dotGrid, shine, wave…

@@ -1,5 +1,5 @@
 // Abre o Remotion Studio (preview ao vivo) do WORKSPACE único da studio.
-// Roda em ~/studio/_workspace (1 npm install, todos os vídeos vivem lá).
+// Roda em ~/.studio-engine (oculta — 1 npm install, todos os vídeos vivem lá).
 // ABRE O NAVEGADOR sozinho. Faz o setup antes (idempotente) se preciso.
 //
 //   node video/scripts/preview.mjs [porta]

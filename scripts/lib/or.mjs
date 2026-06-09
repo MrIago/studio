@@ -96,8 +96,9 @@ export async function generateImage(body, key) {
   return { ok: true, bytes, mime, ext: extFor(mime), cost: d.usage?.cost ?? null };
 }
 
-// Salva o resultado. `name` sem caminho → ~/studio-output/<data>/; caminho
-// explícito (public/, absoluto, /tmp) → respeitado. Retorna o path salvo.
+// Salva o resultado. `name` resolvido por resolveOut (output.mjs): "arquivo" →
+// ~/studio/<projeto>/; "proj/arquivo" → ~/studio/proj/; absoluto/./tmp → respeitado.
+// Retorna o path salvo.
 // Passe { open: true } pra abrir a pasta ao salvar (1 arquivo). Pra LOTES,
 // não use open aqui — chame openOutput(dir) uma vez no fim (evita N janelas).
 export function save(result, name, opts = {}) {

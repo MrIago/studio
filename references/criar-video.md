@@ -32,11 +32,14 @@ Não se cria um projeto Remotion por vídeo. Há **um workspace só**, em
 ### Blocos de componentes (estilo shadcn) — NÃO uma lib fechada
 
 `~/.studio-engine/src/components/` tem blocos por categoria (backgrounds, text,
-hud, audio, 3d, hooks) — **cada componente num arquivo**. Importe só os que a cena
-precisa. **Se falta um, CRIE um novo arquivo** — o repertório cresce a cada vídeo.
-Nunca pense "só dá pra fazer o que está aqui". Leia `src/components/README.md`.
-(O template versionado vive em `video/workspace-template/` na skill; o setup o
-espelha pro workspace.)
+hud, audio, ui, lottie, 3d, hooks) — **cada componente num arquivo**. Importe só os
+que a cena precisa. **Se falta um, CRIE um novo arquivo.** Nunca pense "só dá pra
+fazer o que está aqui". Leia `src/components/README.md`.
+
+⚠️ A engine é um espelho descartável (o setup a regenera do template a cada rodada).
+Um bloco que você queira manter no repertório PERMANENTE deve ser criado na fonte
+versionada da skill — `video/workspace-template/src/components/<categoria>/` — não só
+na engine (lá é efêmero, some no próximo setup).
 
 ### shadcn/ui (vídeos que recriam UI)
 
@@ -172,7 +175,7 @@ As mesmas caixas de `scripts/models/` (ver SKILL.md). Gere os assets pra `public
 
 ```js
 import { gpt54Image2, gpt5ImageMini, recraftV41ProVector,
-         maiVoice2, lyria3 } from '../scripts/models/index.mjs';
+         geminiTts, lyria3 } from '../scripts/models/index.mjs';
 import { save } from '../scripts/lib/or.mjs';
 import { saveAudio } from '../scripts/lib/audio.mjs';
 
@@ -181,7 +184,7 @@ save(await gpt54Image2({ prompt: '...', aspectRatio: '9:16' }), 'public/slide-1'
 // ícone transparente de overlay → public/
 save(await gpt5ImageMini({ prompt: 'bell icon, flat vector, like SVG', transparent: true }), 'public/icon');
 // narração por trecho → public/ (sincroniza legenda com isso)
-saveAudio(await maiVoice2({ input: 'Bem-vindo...', voice: 'pt-BR-Luana:MAI-Voice-2' }), 'public/vo-1');
+saveAudio(await geminiTts({ input: 'Bem-vindo...', voice: 'Sulafat' }), 'public/vo-1');
 // música de fundo (pro = início/meio/fim; clip = loop) → public/
 const m = await lyria3({ prompt: 'upbeat lofi, instrumental, no vocals', version: 'pro' });
 ```

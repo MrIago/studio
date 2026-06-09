@@ -1,7 +1,7 @@
 {
   "name": "studio",
-  "version": "0.2.0",
-  "description": "Estúdio de geração de mídia por IA via OpenRouter (imagem, voz, música) + CRIAR vídeo programático com Remotion. Caixa selada por modelo + guia qual usar; vídeo escrito sob medida montando os assets gerados.",
+  "version": "0.3.0",
+  "description": "Estúdio de geração de mídia por IA via OpenRouter (imagem, voz, música) + animação vetorial Lottie + CRIAR vídeo programático com Remotion. Caixa selada por modelo + guia qual usar; vídeo escrito sob medida montando os assets gerados.",
   "author": {
     "name": "Iago Lima Toledo",
     "url": "https://github.com/MrIago"
@@ -24,6 +24,9 @@
     "seedream",
     "recraft",
     "lyria",
-    "mai-voice"
+    "gemini-tts",
+    "remotion",
+    "video",
+    "lottie"
   ]
 }
