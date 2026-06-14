@@ -17,6 +17,15 @@ export { transcribe, formatTranscript } from '../lib/transcribe.mjs';
 // lottie — animação vetorial leve; Claude ESCREVE o JSON Skottie, caixa só valida+salva (offline, NÃO é API)
 export { lottie, validateLottie, applyDefaults, saveLottie } from '../lib/lottie.mjs';
 export { svgToLottie, svgToLottieShapes } from '../lib/svg-to-lottie.mjs';
+// GERAR vídeo por IA (async submit→poll→download). veo3.1 = qualidade+áudio caro;
+// grok = rápido/barato sem áudio. i2v via refs. ≠ CRIAR vídeo (Remotion). plumbing em ../lib/video.mjs
+export { veo31 } from './veo-3-1.mjs';
+export { grokImagineVideo } from './grok-imagine-video.mjs';
+// GSAP — animar SVG no browser/app (filled draw-on via clip-path). Emite HTML/React standalone.
+// ≠ Lottie (Skottie): GSAP é pra WEB; em Remotion precisa de shim (timeline.seek por frame). Ver references/svg-animation.md
+export { svgToGsap } from '../lib/svg-gsap.mjs';
+// utilitário LOCAL (sem IA/API/custo) — tirar fundo sólido de logo/ícone por flood fill
+export { bgRemove } from './bg-remove.mjs';
 
 // Tabela de decisão (caso → função recomendada). Espelha references/qual-usar.md.
 export const QUAL_USAR = {
@@ -40,5 +49,12 @@ export const QUAL_USAR = {
   musica:               { fn: 'lyria3',               nota: 'clip ~31s/~4cr · pro ~2,6min/~8cr (único de música)' },
   // lottie (animação vetorial leve — escrita à mão, validada no render Remotion)
   lottieVetorial:       { fn: 'lottie',               nota: 'logo/loader/data-viz animado — .json p/ site/app OU camada <Lottie> no vídeo; Claude ESCREVE o JSON, NÃO é API' },
-  svgAnimado:           { fn: 'svgToLottie',          nota: 'SVG→Lottie .json (trim-path/draw/gradient) — pega TODOS os <path>' },
+  svgAnimado:           { fn: 'svgToLottie',          nota: 'SVG→Lottie .json TRAÇO (stroke+trim/draw-on) — pega TODOS os <path>. Filled NÃO (trim só desenha traço)' },
+  // animar SVG preenchido (estilo original, não line-art) → GSAP, não Lottie
+  svgAnimadoFilled:     { fn: 'svgToGsap',            nota: 'SVG PREENCHIDO se desenhando (clip-path wipe) no browser/app. Lottie filled exige track-matte frágil; GSAP faz em 1 linha. Ver references/svg-animation.md' },
+  // vídeo IA (GERAR, não CRIAR/Remotion) — async submit→poll→download, i2v via refs
+  videoQualidade:       { fn: 'veo31',                nota: 'qualidade + ÁUDIO nativo; first+last frame (imageMode:frames); CARO ~$0.40/s (8s≈320cr)' },
+  videoRapido:          { fn: 'grokImagineVideo',     nota: 'rápido/barato, SEM áudio, só first_frame; 720p 5s≈35cr' },
+  // utilitário local (sem IA/custo)
+  tirarFundoLogo:       { fn: 'bgRemove',             nota: 'LOCAL, instantâneo, sem custo: fundo sólido de logo/ícone (flood fill, preserva cores enclausuradas)' },
 };

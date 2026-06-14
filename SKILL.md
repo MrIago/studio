@@ -10,19 +10,33 @@ metadata:
 # studio
 
 Estúdio de **geração de mídia por IA** operado por linguagem natural. Gera e
-edita imagem, voz e música via OpenRouter — cada modelo numa **caixa selada**
-(`scripts/models/`) com opções completas, escolhido por um mapa "qual usar"
-testado na prática. Também **CRIA vídeo** (Remotion, programático) montando os
-assets gerados. (Gerar vídeo por IA — veo/seedance — entra em versão futura.)
+edita imagem, voz, música **e vídeo** via OpenRouter — cada modelo numa **caixa
+selada** (`scripts/models/`) com opções completas, escolhido por um mapa "qual
+usar" testado na prática. Também **anima SVG** (Lottie traço / GSAP preenchido),
+**CRIA vídeo** (Remotion, programático) montando os assets, e tem utilitários
+locais sem custo (ex: tirar fundo de logo).
 
 ## CRIAR vídeo (Remotion) vs GERAR vídeo (IA)
 
 Quando o usuário pedir um **vídeo**, distinga:
 - **CRIAR** = Remotion (vídeo programático em React) — você escreve o código do
   vídeo **sob medida** e monta os assets da studio (imagem/voz/música) num MP4.
-  Qualquer tipo de vídeo. **É o que a skill faz hoje.** → leia `references/criar-video.md`.
-- **GERAR** = IA (prompt→vídeo via veo/seedance) — ainda NÃO implementado aqui.
-  Se pedirem isso, avise que é versão futura (ou use a skill `openrouter-video`).
+  Qualquer tipo de vídeo. → leia `references/criar-video.md`.
+- **GERAR** = IA (prompt→vídeo, ou imagem→vídeo via first_frame). Implementado:
+  `veo31` (qualidade + ÁUDIO nativo, caro, first+last frame) e `grokImagineVideo`
+  (rápido/barato, sem áudio, só first_frame). Protocolo ASSÍNCRONO
+  (submit→poll→download) em `scripts/lib/video.mjs` — a chamada bloqueia até o
+  vídeo ficar pronto (minutos). i2v: passe `refs` (1ª imagem = first_frame).
+
+## Animar logo/SVG (Lottie traço vs GSAP preenchido)
+
+Pedido de **logo se montando / reveal animado**? Decisão testada (detalhe em
+`references/svg-animation.md`):
+- **traço se desenhando** (line-art) → `svgToLottie` (Lottie `stroke`+`trim`). `.json` portável.
+- **preenchido, estilo original** (sólido se montando) → `svgToGsap` (GSAP `clip-path` wipe).
+  ⚠️ Lottie NÃO faz filled draw-on bem (trim só desenha traço; preenchido exige
+  track-matte frágil que quebra no renderer). Pra preenchido use GSAP.
+- base ideal pros dois: um SVG real de `recraftV41ProVector`.
 
 ## Configuração / primeiro uso
 
@@ -87,11 +101,15 @@ seedream/gemini. Veja velocidade em `references/velocidade.md`.
 | Gerar personagem copyright do zero (gpt recusa) | seedream / recraft-v3 | `seedream45` |
 | Ícone transparente pra asset/slide | gpt-5-image-mini ("flat vector style") | `gpt5ImageMini` |
 | SVG vetorial real (escala favicon→outdoor) | recraft-v4.1-pro-vector | `recraftV41ProVector` |
-| Animação vetorial leve (logo/loader/data-viz p/ site, app ou camada de vídeo) | Lottie (escrito à mão, validado no Remotion) | `lottie` / `svgToLottie` |
+| Animar SVG em TRAÇO (logo/loader/data-viz line-art) | Lottie (escrito à mão) | `lottie` / `svgToLottie` |
+| Animar SVG PREENCHIDO (logo estilo original se montando) | GSAP (clip-path wipe, browser/app) | `svgToGsap` |
+| Tirar fundo sólido de logo/ícone (LOCAL, sem IA/custo) | bg-remove (flood fill) | `bgRemove` |
 | Fundo c/ paleta da marca + 65 styles | recraft-v3 | `recraftV3` |
 | Narração / voz | gemini-tts (30 vozes + tags de emoção inline) | `geminiTts` |
 | Diálogo / história com personagens | gemini-tts multi-voz | `geminiDialog` / `manyVoices` |
 | Música instrumental | lyria-3 (clip ~31s loop / pro ~2,6min trilha) | `lyria3` |
+| GERAR vídeo c/ qualidade + áudio (caro) | veo-3.1 (~$0.40/s; first+last frame) | `veo31` |
+| GERAR vídeo rápido/barato (sem áudio) | grok-imagine-video (720p 5s≈35cr) | `grokImagineVideo` |
 | Transcrição (timestamps) | Groq whisper (grátis, sem GPU) | `transcribe` |
 
 **🎬 Lottie vs SVG vs vídeo (como decidir)**: *anima?* não → SVG estático
@@ -134,9 +152,12 @@ Cada modelo é um `.mjs` em `scripts/models/` com opções completas. Importe do
 
 ```js
 import { gpt54Image2, seedream45, gpt5ImageMini, recraftV3, recraftV41ProVector,
-         geminiTts, geminiDialog, manyVoices, lyria3 } from './scripts/models/index.mjs';
+         geminiTts, geminiDialog, manyVoices, lyria3,
+         veo31, grokImagineVideo, svgToGsap, bgRemove } from './scripts/models/index.mjs';
 import { save } from './scripts/lib/or.mjs';
 import { saveAudio } from './scripts/lib/audio.mjs';
+import { saveVideo } from './scripts/lib/video.mjs';
+import { saveGsap } from './scripts/lib/svg-gsap.mjs';
 
 // imagem premium
 save(await gpt54Image2({ prompt: 'a premium product photo of...', imageSize: '1K' }), 'out');
@@ -162,6 +183,20 @@ const falas = await manyVoices([{ voice: 'Fenrir', text: '[shouting] Ao ataque!'
 
 // música (pro = início/meio/fim; clip = loop curto)
 const m = await lyria3({ prompt: 'upbeat lofi, instrumental, no vocals', version: 'pro' });
+
+// GERAR vídeo por IA — ASYNC (bloqueia até ficar pronto, minutos). refs[0]=first_frame (i2v)
+saveVideo(await grokImagineVideo({ prompt: 'logo zooms in, soft glow', duration: 5, refs }), 'video');
+saveVideo(await veo31({ prompt: 'cinematic reveal', duration: 8, generateAudio: true,
+  imageMode: 'frames', refs: [first, logo] }), 'video-hq'); // first+last frame: termina na logo
+
+// animar SVG PREENCHIDO (browser/app) — clip-path wipe; parts agrupa <path> por índice
+saveGsap(svgToGsap(svgText, { parts: [
+  { name:'truck', paths:[1,2,3], in:'slide-left', at:0, dur:0.9 },
+  { name:'e', paths:[0], in:'wipe-down', at:0.85, dur:1.1 },   // desenha o preenchido de cima→baixo
+]}), 'logo-anim', { open: true });
+
+// tirar fundo sólido de logo/ícone — LOCAL, sem custo, instantâneo (flood fill das bordas)
+save(bgRemove({ input: '/caminho/logo.png' }), 'logo-sem-fundo');
 ```
 
 CLI rápido: `node scripts/models/<modelo>.mjs "prompt"` (gera e abre a pasta).
@@ -211,6 +246,7 @@ web, PERGUNTE o link ao usuário (regra de ouro 3).
 - `references/recraft-estilos.md` — 65 estilos do recraft-v3 + capacidades de paleta
 - `references/secrets.md` — configurar a chave OpenRouter
 - `references/lottie.md` — **Lottie** (animação vetorial leve): regras Skottie, builders, conversor SVG, render
+- `references/svg-animation.md` — **animar logo/SVG**: Lottie traço vs GSAP preenchido, track-matte (por que evitar), GSAP no Remotion (shim), vídeo IA frames (veo/grok)
 - `references/criar-video.md` — **CRIAR vídeo (Remotion)**: fluxo, regras de ouro, integração com os assets
 - `references/motion-design.md` — vocabulário de motion design PRO (técnicas dos 21 prompts oficiais)
 - `references/remotion-official/` — doc oficial completa do Remotion (37 regras; comece pelo `SKILL.md`)
@@ -219,10 +255,14 @@ web, PERGUNTE o link ao usuário (regra de ouro 3).
 
 ## Scripts
 
-- `scripts/models/*.mjs` — 9 caixas seladas (7 imagem + voz/gemini-tts + música/lyria-3); index.mjs também reexporta transcrição + Lottie (`lottie`/`svgToLottie`, de `scripts/lib/`)
+- `scripts/models/*.mjs` — caixas seladas: imagem + voz/gemini-tts + música/lyria-3 + **vídeo IA** (`veo-3-1`, `grok-imagine-video`) + `bg-remove` (LOCAL, sem IA); index.mjs também reexporta transcrição, Lottie (`lottie`/`svgToLottie`) e GSAP (`svgToGsap`) de `scripts/lib/`
 - `scripts/models/index.mjs` — reexporta tudo + tabela `QUAL_USAR` programática
 - `scripts/lib/or.mjs` — plumbing OR (getKey, generateImage, save)
 - `scripts/lib/audio.mjs` — plumbing TTS/música (tts, pcmToWav, saveAudio)
+- `scripts/lib/video.mjs` — plumbing vídeo IA ASYNC (submitOrVideo, pollOrVideo, runVideo, saveVideo)
+- `scripts/lib/svg-gsap.mjs` — SVG→animação GSAP preenchida (svgToGsap, saveGsap); HTML standalone
+- `scripts/lib/lottie.mjs` + `svg-to-lottie.mjs` + `lottie-build.mjs` — Lottie (escrever/validar/salvar + SVG→Lottie traço)
+- `scripts/models/bg-remove.mjs` — tira fundo sólido (flood fill, codec PNG próprio, zero dep)
 - `scripts/setup.mjs` — **setup / primeiro uso**: status das chaves + configura (`node setup.mjs` ou `setup.mjs OPENROUTER_KEY=...`)
 - `scripts/lib/config.mjs` — config raw da chave (usado pelo setup)
 - `video/scripts/setup.mjs` — instala a engine Remotion (1x, só p/ vídeo)
