@@ -260,7 +260,8 @@ web, PERGUNTE o link ao usuário (regra de ouro 3).
 - `scripts/lib/or.mjs` — plumbing OR (getKey, generateImage, save)
 - `scripts/lib/audio.mjs` — plumbing TTS/música (tts, pcmToWav, saveAudio)
 - `scripts/lib/video.mjs` — plumbing vídeo IA ASYNC (submitOrVideo, pollOrVideo, runVideo, saveVideo)
-- `scripts/lib/svg-gsap.mjs` — SVG→animação GSAP preenchida (svgToGsap, saveGsap); HTML standalone
+- `scripts/lib/svg-gsap.mjs` — SVG→animação GSAP preenchida (svgToGsap, saveGsap); HTML standalone (web/app)
+- `scripts/lib/svg-remotion.mjs` — SVG→componente Remotion (svgToRemotion, installRemotionVideo); mesma coreografia em MP4 (dirigido por useCurrentFrame)
 - `scripts/lib/lottie.mjs` + `svg-to-lottie.mjs` + `lottie-build.mjs` — Lottie (escrever/validar/salvar + SVG→Lottie traço)
 - `scripts/models/bg-remove.mjs` — tira fundo sólido (flood fill, codec PNG próprio, zero dep)
 - `scripts/setup.mjs` — **setup / primeiro uso**: status das chaves + configura (`node setup.mjs` ou `setup.mjs OPENROUTER_KEY=...`)

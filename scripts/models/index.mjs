@@ -24,6 +24,9 @@ export { grokImagineVideo } from './grok-imagine-video.mjs';
 // GSAP — animar SVG no browser/app (filled draw-on via clip-path). Emite HTML/React standalone.
 // ≠ Lottie (Skottie): GSAP é pra WEB; em Remotion precisa de shim (timeline.seek por frame). Ver references/svg-animation.md
 export { svgToGsap } from '../lib/svg-gsap.mjs';
+// SVG → Remotion (Video.tsx animado por useCurrentFrame) → MP4. Mesma coreografia do GSAP,
+// mas dirigida por frame (clip-path/transform via interpolate). Renderiza vídeo portável.
+export { svgToRemotion, installRemotionVideo } from '../lib/svg-remotion.mjs';
 // utilitário LOCAL (sem IA/API/custo) — tirar fundo sólido de logo/ícone por flood fill
 export { bgRemove } from './bg-remove.mjs';
 
@@ -52,6 +55,7 @@ export const QUAL_USAR = {
   svgAnimado:           { fn: 'svgToLottie',          nota: 'SVG→Lottie .json TRAÇO (stroke+trim/draw-on) — pega TODOS os <path>. Filled NÃO (trim só desenha traço)' },
   // animar SVG preenchido (estilo original, não line-art) → GSAP, não Lottie
   svgAnimadoFilled:     { fn: 'svgToGsap',            nota: 'SVG PREENCHIDO se desenhando (clip-path wipe) no browser/app. Lottie filled exige track-matte frágil; GSAP faz em 1 linha. Ver references/svg-animation.md' },
+  svgAnimadoVideo:      { fn: 'svgToRemotion',        nota: 'mesma coreografia em VÍDEO MP4 (Remotion, dirigido por useCurrentFrame+interpolate). Portável, preenchido. Renderiza com video/scripts/render.mjs' },
   // vídeo IA (GERAR, não CRIAR/Remotion) — async submit→poll→download, i2v via refs
   videoQualidade:       { fn: 'veo31',                nota: 'qualidade + ÁUDIO nativo; first+last frame (imageMode:frames); CARO ~$0.40/s (8s≈320cr)' },
   videoRapido:          { fn: 'grokImagineVideo',     nota: 'rápido/barato, SEM áudio, só first_frame; 720p 5s≈35cr' },

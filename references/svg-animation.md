@@ -74,6 +74,36 @@ export const LogoGsap = () => {
 
 Resumo: **GSAP é pra WEB/app** (o `svgToGsap` emite HTML standalone — ideal pra logo de entrada num site/React, ex. um `Overlay.tsx`). No Remotion, ou faz o shim `seek`, ou usa `interpolate`/`spring` nativos (mais idiomático).
 
+### `svgToRemotion` — a MESMA coreografia em VÍDEO MP4 (pronto)
+
+Não precisa escrever o componente na mão: `svgToRemotion(svg, { parts })` gera o
+`Video.tsx` (dirigido por `useCurrentFrame` + `interpolate`/`spring`), `installRemotionVideo`
+joga na engine, e `video/scripts/render.mjs <id> <projeto>` renderiza o MP4. O
+"desenhar preenchido" usa `clip-path` setado POR FRAME (não CSS @keyframes — esses
+não sincronizam). **Provado**: caminhão slide → "e" preenchido wipe cima→baixo → moto pop, termina na logo exata.
+
+```js
+import { svgToRemotion, installRemotionVideo } from './scripts/lib/svg-remotion.mjs';
+const { tsx } = svgToRemotion(svg, { id:'logo-anim', fps:60, width:1080, height:1080, parts:[
+  { name:'e',     paths:[0],             in:'wipe-down',  at:0.85, dur:1.1 },
+  { name:'truck', paths:[1,2,3],         in:'slide-left', at:0,    dur:0.9 },
+  { name:'moto',  paths:[4,5,6],         in:'pop',        at:2.0,  dur:0.55 },
+]});
+installRemotionVideo('logo-anim', tsx);
+// depois: node video/scripts/render.mjs logo-anim <projeto>  → ~/studio/<projeto>/logo-anim.mp4
+```
+
+Mesmas entradas (`in`) do `svgToGsap`. **3 destinos, 1 coreografia:** `svgToGsap` (web/app HTML),
+`svgToRemotion` (MP4 portável), `svgToLottie` (traço/.json).
+
+### O que NÃO funciona no Remotion (resumão)
+
+| | sincroniza no render headless? |
+|---|---|
+| CSS `@keyframes` / `animation:` | ❌ relógio real |
+| GSAP timeline tempo real | ❌ relógio próprio (precisa `tl.seek(frame/fps)`) |
+| **CSS `clip-path`/`transform`/`opacity` por frame via `interpolate`** | ✅ (é o que `svgToRemotion` faz) |
+
 ## Vídeo IA — frames inicial/final (i2v)
 
 Pra "terminar exatamente numa imagem" (ex: a logo completa):
