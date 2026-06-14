@@ -120,3 +120,27 @@ Pra "terminar exatamente numa imagem" (ex: a logo completa):
 ## Pegando um SVG limpo pra animar
 
 `recraftV41ProVector` (i2i com a logo PNG/ref) → SVG real com `<path>` de verdade, escala ∞. É a melhor base pro `svgToGsap`/`svgToLottie` (aterrar com SVG concreto > inventar pontos).
+
+## Logo theme-aware (claro/escuro) — mapear os tons do recraft pra TOKENS, não pra cor fixa
+
+Quando a logo vetorizada precisa **seguir o tema** (dark-mode / light-mode) num app, NÃO mantenha as cores literais nem gere 2 SVGs (um por tema). O recraft devolve a logo em **N tons** (ex: `rgb(246)` corpo, `rgb(43)` cinza, `rgb(5)` contorno). O acerto é trocar `fill="rgb(...)"` por **classe de token de tema** (Tailwind/CSS var) — UM SVG só, inverte sozinho, zero flash, zero JS.
+
+Regra de mapeamento por papel do tom (não por valor cego):
+
+| Tom no vetor | Papel na logo | Vira | Comportamento |
+|---|---|---|---|
+| mais claro (corpo/silhueta) | a massa principal | `fill-foreground` | inverte (escuro no light, claro no dark) |
+| **mid-tone (cinza)** | partes secundárias **visíveis** (ex: moto, cabine) | `fill-muted-foreground` | **fica cinza nos DOIS** (theme-independente) |
+| mais escuro (contorno/janela/recortes) | acentos/cutouts | `fill-background` | inverte oposto (some na cor do fundo = cutout) |
+
+⚠️ **Armadilha que custou tempo:** colapsar pra 2 tons (corpo→foreground, "resto"→background) faz o **mid-tone cinza sumir** — a moto/cabine viram `background` e desaparecem no fundo claro **e** escuro. Logo com 3 tons exige 3 tokens. Conte os tons (`grep -oE 'fill="rgb\([^)]*\)"' logo.svg | sort | uniq -c`) ANTES de mapear.
+
+```js
+// gere o componente do vetor trocando fill→className por papel do tom
+const cls = r => r > 150 ? 'fill-foreground'        // corpo (inverte)
+              : r > 20  ? 'fill-muted-foreground'   // cinza visível (igual nos 2 temas)
+              :           'fill-background';         // contorno/cutout (inverte oposto)
+// <path d="..." className={cls(r)} />  — 1 SVG serve light E dark; o fundo do container usa bg-background
+```
+
+Pra logo **animada + theme-aware** ao mesmo tempo: o mesmo SVG com tokens + os `<g id>` por parte (pro GSAP). Tokens nos fills não atrapalham a animação (GSAP anima transform/opacity/clip-path, não a cor).
