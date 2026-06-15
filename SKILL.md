@@ -100,7 +100,7 @@ seedream/gemini. Veja velocidade em `references/velocidade.md`.
 | Compor / personagem/famoso FIEL | ref real → gpt-5.4 compõe | `gpt54Image2` |
 | Gerar personagem copyright do zero (gpt recusa) | seedream / recraft-v3 | `seedream45` |
 | Ícone transparente pra asset/slide | gpt-5-image-mini ("flat vector style") | `gpt5ImageMini` |
-| SVG vetorial real (escala favicon→outdoor) | recraft-v4.1-pro-vector | `recraftV41ProVector` |
+| Transformar imagem/PNG em SVG (vetorizar) · SVG real escala ∞ | recraft-v4.1-pro-vector (i2i; recipe+theme em `references/svg-animation.md`) | `recraftV41ProVector` |
 | Animar SVG em TRAÇO (logo/loader/data-viz line-art) | Lottie (escrito à mão) | `lottie` / `svgToLottie` |
 | Animar SVG PREENCHIDO (logo estilo original se montando) | GSAP (clip-path wipe, browser/app) | `svgToGsap` |
 | Tirar fundo sólido de logo/ícone (LOCAL, sem IA/custo) | bg-remove (flood fill) | `bgRemove` |

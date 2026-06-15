@@ -117,9 +117,24 @@ Pra "terminar exatamente numa imagem" (ex: a logo completa):
 - veo só aceita ratio **16:9 / 9:16** (1:1 dá 400) → emoldure frames quadrados num canvas 16:9 preto antes.
 - Frame inicial "reduzido" (ex: só o caminhão) → edite a logo com `gemini25Flash` (i2i, remove o resto).
 
-## Pegando um SVG limpo pra animar
+## Transformar imagem em SVG (vetorizar PNG/logo) — `recraftV41ProVector`
 
-`recraftV41ProVector` (i2i com a logo PNG/ref) → SVG real com `<path>` de verdade, escala ∞. É a melhor base pro `svgToGsap`/`svgToLottie` (aterrar com SVG concreto > inventar pontos).
+Pedido "transforma essa imagem/logo em SVG", "vetoriza esse PNG", "quero em SVG" → **`recraftV41ProVector`** (i2i): passa a imagem em `refs` + um `prompt` que **descreve o que é** e pede **flat vector, formas sólidas, paths limpos**. Sai SVG real com `<path>` de verdade (escala ∞). É também a melhor base pro `svgToGsap`/`svgToLottie` (aterrar com SVG concreto > inventar pontos).
+
+Recipe do prompt (testado):
+
+```js
+import { recraftV41ProVector } from './scripts/models/index.mjs';
+const refs = [{ bytes: fs.readFileSync('logo.png'), mimeType: 'image/png' }];
+const prompt = 'A clean flat vector version of this <descreva o objeto/marca>: '
+  + 'solid <cor> shapes on a solid <cor> background, minimal flat design, crisp clean paths.';
+save(await recraftV41ProVector({ prompt, refs }), 'logo-vector', { ext: 'svg' });
+```
+
+- **Descreva o conteúdo** no prompt ("a rounded letter e with a delivery truck on top and a motorbike at the tail") — o recraft é i2i, mas a descrição guia os paths.
+- **"solid white shapes on solid black"** (ou tons bem separados) → o SVG sai com **tons distintos** (branco/cinza/preto) — é o que permite depois mapear pra tokens de tema (ver seção abaixo). Cor chapada > sombreado/gradiente.
+- ⚠️ Gotcha do recraft vector: **branco em espaço negativo (furo/contra-forma) às vezes não some** — se precisar transparência no furo, passa por `bgRemove` ou ajusta. (Também em `qual-usar.md`.)
+- Logo que vai **seguir tema claro/escuro** no app → NÃO use as cores literais; mapeie os tons pra tokens (próxima seção).
 
 ## Logo theme-aware (claro/escuro) — mapear os tons do recraft pra TOKENS, não pra cor fixa
 
