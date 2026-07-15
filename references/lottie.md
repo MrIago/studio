@@ -13,6 +13,42 @@ num vídeo Remotion (bloco `components/lottie/LottieLayer.tsx`).
 [motion-design-skill da LottieFiles](https://github.com/lottiefiles/motion-design-skill)
 (craft de timing/easing — guidance em ms; converta `frames = ms/1000*fr`).
 
+## 📚 Biblioteca de design/motion taste (`references/text-to-lottie/`)
+
+Cópia integral das references da skill [diffusionstudio/lottie](https://github.com/diffusionstudio/lottie)
+(o upgrade "better design taste, better motion, fewer random decisions"). É
+conhecimento de **design e motion runtime-agnóstico** — vale pra Lottie escrito à
+mão E pra motion design no Remotion. **Carregue sob demanda** (1 nível, só o que
+casa com a tarefa — não abra a biblioteca toda). Tudo em EN.
+
+⚠️ **Adaptação ao studio:** o runtime aqui é **lottie-web/Remotion**, não o player
+Skottie deles. Logo: ignore `text-to-lottie/player-contract.md` (Skottie-only —
+`public/projects`, `?frame=N`, `/__context`); a "anatomia/gotchas/render" reais
+do studio estão **neste** `lottie.md`. Easing: a tabela de 7 anchors do
+`motion-taste.md` já está portada no `ease.*` do `lottie-build.mjs` (anchors
+nomeados). Para SVG, `svg-compatibility.md` lista regras que o `svg-to-lottie.mjs`
+ainda não cobre (transforms aninhados, fill-rule, gradients/masks do source) —
+trate como checklist manual ao converter.
+
+| Intenção | Ler em `references/text-to-lottie/` |
+| --- | --- |
+| Qualquer cena designada (premium/clean/minimal/card) | `design-taste.md` (premium = subtrair) |
+| Pacing, easing, staging, estilo de animação | `motion-taste.md` (7 easing anchors + timings) |
+| Estrutura JSON, keyframes, slots, shapes, assets | `lottie-spec-map.md` |
+| Logo | `recipe-logo.md` + `motion-taste.md` + `design-taste.md` |
+| Tipografia, título, quote, text reveal | `recipe-typography.md` + `design-taste.md` |
+| Lower third, name tag, faixa/overlay | `recipe-lower-thirds.md` + `design-taste.md` |
+| Loader, ícone, spinner, success/error/empty state | `recipe-loaders-icons.md` + `motion-taste.md` |
+| Microinteração de UI | `recipe-ui-microinteractions.md` + `design-taste.md` |
+| "Anima esse SVG" / SVG→Lottie | `recipe-svg-animation.md` + `svg-compatibility.md` |
+| Câmera, pan, zoom, parallax, scene motion | `recipe-camera-scene-motion.md` + `design-taste.md` |
+| Diagrama, linha técnica, callout, flow trace | `recipe-diagram-technical.md` + `design-taste.md` |
+| Data, stats, KPIs, gráficos, métricas | `recipe-data-stats.md` + `design-taste.md` |
+| Product launch, feature, social promo | `recipe-product-promo.md` + `design-taste.md` |
+| Texto longo, lista, timeline, before/after, multi-beat, chapters | `chapterization-transition-grammar.md` + `motion-taste.md` |
+| Glow, glass, metal, gradient, burst | `recipe-visual-effects.md` + `design-taste.md` |
+| Brief inicial / direção reutilizável | `recipe-starter-projects.md` + `design-taste.md` |
+
 ## Quando usar (vs SVG estático vs vídeo)
 
 - **anima?** não → SVG estático (`recraftV41ProVector`) ou PNG (`gpt5ImageMini`).

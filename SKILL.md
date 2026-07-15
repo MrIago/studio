@@ -245,7 +245,8 @@ web, PERGUNTE o link ao usuário (regra de ouro 3).
 - `references/velocidade.md` — ranking de velocidade de geração
 - `references/recraft-estilos.md` — 65 estilos do recraft-v3 + capacidades de paleta
 - `references/secrets.md` — configurar a chave OpenRouter
-- `references/lottie.md` — **Lottie** (animação vetorial leve): regras Skottie, builders, conversor SVG, render
+- `references/lottie.md` — **Lottie** (animação vetorial leve): regras Skottie, builders, conversor SVG, render + **tabela de roteamento** pra biblioteca de design/motion taste
+- `references/text-to-lottie/` — biblioteca **design taste / motion taste / 12 recipes / chaptering** copiada do upgrade da [diffusionstudio/lottie](https://github.com/diffusionstudio/lottie) (EN, runtime-agnóstico, carregar sob demanda — roteamento em `lottie.md`; ignore `player-contract.md`, é Skottie-only)
 - `references/svg-animation.md` — **animar logo/SVG**: Lottie traço vs GSAP preenchido, track-matte (por que evitar), GSAP no Remotion (shim), vídeo IA frames (veo/grok)
 - `references/criar-video.md` — **CRIAR vídeo (Remotion)**: fluxo, regras de ouro, integração com os assets
 - `references/motion-design.md` — vocabulário de motion design PRO (técnicas dos 21 prompts oficiais)

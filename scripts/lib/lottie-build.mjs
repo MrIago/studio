@@ -17,11 +17,27 @@ export function rgba(c) {
 }
 
 // ── easing presets (handles bezier i/o) ──
+// Genéricos + os 7 "motion anchors" do upgrade (text-to-lottie/motion-taste.md),
+// escolhidos por COMPORTAMENTO (entrando/assentando/viajando/saindo/loop/corte),
+// não por tipo de layer. São DEFAULTS pra derivar, não preset fechado: comece no
+// anchor mais próximo e ajuste UMA qualidade (aceleração, coast, pouso, overshoot).
+// Hierarquia: só o elemento focal ganha a personalidade mais forte (expressivePop);
+// suporte usa anchors mais quietos (settleSoft, travelBalanced).
+// cubic-bezier(x1,y1,x2,y2) → o:{x:x1,y:y1}, i:{x:x2,y:y2}.
+const bez = (x1, y1, x2, y2) => ({ o: { x: [x1], y: [y1] }, i: { x: [x2], y: [y2] } });
 export const ease = {
   inOut: { i: { x: [0.42], y: [1] }, o: { x: [0.58], y: [0] } },
   out:   { i: { x: [0.16], y: [1] }, o: { x: [0.3],  y: [0] } },
   in:    { i: { x: [0.7],  y: [1] }, o: { x: [0.5],  y: [0] } },
   linear:{ i: { x: [1],    y: [1] }, o: { x: [0],    y: [0] } },
+  // motion anchors (comportamento → feel):
+  entranceSharp: bez(0.20, 0.75, 0.34, 0.94), // entrando / mask-wipe: rápido in, pouso macio
+  settleSoft:    bez(0.00, 0.65, 0.51, 0.99), // assentando / count-up / logo lockup: ease-out fundo, sem bounce
+  kineticUi:     bez(0.85, 0.46, 0.14, 0.53), // state move pequeno e vivo (toggle/accent) — não todo UI
+  expressivePop: bez(0.94, 0.75, 0.34, 0.94), // palavra kinética / brand flourish: fast-out + settle macio
+  travelBalanced:bez(1.00, 0.49, 0.00, 0.55), // viagem de objeto/câmera/state-to-state: S-curve ease-in-out
+  exitAccelerate:bez(1.00, 0.02, 0.54, 0.42), // saindo / companheiro de hard-cut: começa devagar, termina rápido
+  travelCut:     bez(0.15, 0.85, 0.95, 0.05), // só p/ movimento interrompido/mascarado/cortado antes de assentar
 };
 // versão multi-eixo (pra escala/posição vec) — repete o handle por eixo
 function easeN(e, dims) {
