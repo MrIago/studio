@@ -1,10 +1,10 @@
 ---
 name: studio
-description: Estúdio de geração de mídia por IA via OpenRouter — gera e edita IMAGENS (qualidade premium, realismo com pessoas, ícones transparentes, logos SVG, paleta de marca, 65 estilos artísticos), compõe cenas fiéis com personagens/famosos a partir de fotos de referência, narração de VOZ (30 vozes com emoção inline e diálogo multi-personagem), MÚSICA instrumental, e CRIA VÍDEO programático com Remotion (montando os assets gerados num MP4 — qualquer tipo, escrito sob medida). Cada modelo é uma caixa selada com opções completas e há um guia "qual modelo usar" por caso (qualidade vs rápido/barato, custo, velocidade). Use sempre que o usuário quiser gerar/editar imagem, criar ícone/logo/asset, fazer um post, compor uma cena com pessoa específica, gerar narração/trilha sonora, contar uma história com vozes, ou criar/montar um vídeo (demo, reels, carrossel animado, intro pra README) — mesmo que não diga "OpenRouter" ou "Remotion".
+description: Estúdio de geração de mídia por IA via OpenRouter — gera e edita IMAGENS (qualidade premium, realismo com pessoas, ícones transparentes, logos SVG, paleta de marca, 65 estilos artísticos), compõe cenas fiéis com personagens/famosos a partir de fotos de referência, narração de VOZ (30 vozes com emoção inline e diálogo multi-personagem), MÚSICA instrumental, CRIA VÍDEO com motion design profissional (Remotion/HyperFrames: explicativo, tutorial narrado, lançamento de produto, reels 9:16, intro), EDITA VÍDEO GRAVADO (talking head/YouTube/reel: corta respiros e erros pela transcrição palavra a palavra, legenda, zoom/punch-in, câmera em miniatura sobre animação, B-roll, música e efeitos, loudness) e GERA vídeo por IA (30 modelos: Veo, Seedance, Kling, Wan, Runway…). Voz PT-BR nativa (MAI-Voice) e ElevenLabs v4. Catálogo vivo de modelos com preço. Use sempre que o usuário quiser gerar/editar imagem, criar ícone/logo/asset, fazer um post, compor uma cena com pessoa específica, gerar narração/trilha sonora, contar uma história com vozes, criar/montar um vídeo, editar uma gravação, fazer motion graphics ou um tutorial em vídeo — mesmo que não diga "OpenRouter", "Remotion" ou "edição".
 license: MIT
 metadata:
   author: mriago
-  version: 0.2.0
+  version: 0.3.0
 ---
 
 # studio
@@ -16,17 +16,24 @@ usar" testado na prática. Também **anima SVG** (Lottie traço / GSAP preenchid
 **CRIA vídeo** (Remotion, programático) montando os assets, e tem utilitários
 locais sem custo (ex: tirar fundo de logo).
 
-## CRIAR vídeo (Remotion) vs GERAR vídeo (IA)
+## Vídeo: CRIAR, EDITAR ou GERAR
 
 Quando o usuário pedir um **vídeo**, distinga:
-- **CRIAR** = Remotion (vídeo programático em React) — você escreve o código do
-  vídeo **sob medida** e monta os assets da studio (imagem/voz/música) num MP4.
-  Qualquer tipo de vídeo. → leia `references/criar-video.md`.
-- **GERAR** = IA (prompt→vídeo, ou imagem→vídeo via first_frame). Implementado:
-  `veo31` (qualidade + ÁUDIO nativo, caro, first+last frame) e `grokImagineVideo`
-  (rápido/barato, sem áudio, só first_frame). Protocolo ASSÍNCRONO
-  (submit→poll→download) em `scripts/lib/video.mjs` — a chamada bloqueia até o
-  vídeo ficar pronto (minutos). i2v: passe `refs` (1ª imagem = first_frame).
+- **CRIAR** = sem filmagem: motion graphics, explicativo, tutorial narrado,
+  lançamento, reel animado. Remotion (engine da studio) ou HyperFrames. Você escreve
+  o vídeo sob medida e monta os assets da studio. → `references/criar-video.md`
+  **e** `references/motion-design.md` (o ofício: uma ideia por beat, holofote,
+  mundo persistente, eases, som).
+- **EDITAR** = o usuário gravou (câmera falando, tela+câmera, entrevista): cortar
+  respiros e erros, legenda, zoom, PiP, B-roll, música. → `references/editar-video.md`.
+- **GERAR** = IA prompt→vídeo ou imagem→vídeo: `orVideo({ model, … })` cobre os 30
+  modelos da OR; `veo31`/`grokImagineVideo` seguem. Assíncrono (minutos).
+  Escolha e preço: `references/modelos-2026-10.md` ou `node scripts/catalog.mjs video`.
+
+Em qualquer um: **plano aprovado antes de construir** (brief → beat table →
+prancha de stills), **confira o render lendo quadros** (`video/scripts/qa.mjs`)
+e **meça a loudness**; você não assiste nem ouve, então não afirme que "ficou bom"
+sem esses números. Nota do usuário vira regra escrita na reference certa.
 
 ## Animar logo/SVG (Lottie traço vs GSAP preenchido)
 
@@ -105,12 +112,17 @@ seedream/gemini. Veja velocidade em `references/velocidade.md`.
 | Animar SVG PREENCHIDO (logo estilo original se montando) | GSAP (clip-path wipe, browser/app) | `svgToGsap` |
 | Tirar fundo sólido de logo/ícone (LOCAL, sem IA/custo) | bg-remove (flood fill) | `bgRemove` |
 | Fundo c/ paleta da marca + 65 styles | recraft-v3 | `recraftV3` |
-| Narração / voz | gemini-tts (30 vozes + tags de emoção inline) | `geminiTts` |
+| Narração PT-BR (sotaque nativo) | MAI-Voice 2.1 pt-BR-Rafael/Caio/Luana | `speech({pick:'ptbr'})` |
+| Narração mais expressiva | ElevenLabs v4 (brian/sarah…) | `speech({pick:'expressiva'})` |
+| Narração / voz com tags de emoção | gemini-tts (30 vozes + tags inline) | `geminiTts` |
 | Diálogo / história com personagens | gemini-tts multi-voz | `geminiDialog` / `manyVoices` |
 | Música instrumental | lyria-3 (clip ~31s loop / pro ~2,6min trilha) | `lyria3` |
 | GERAR vídeo c/ qualidade + áudio (caro) | veo-3.1 (~$0.40/s; first+last frame) | `veo31` |
 | GERAR vídeo rápido/barato (sem áudio) | grok-imagine-video (720p 5s≈35cr) | `grokImagineVideo` |
-| Transcrição (timestamps) | Groq whisper (grátis, sem GPU) | `transcribe` |
+| GERAR vídeo com qualquer outro modelo (Seedance/Kling/Veo lite/Wan/Runway…) | ver `modelos-2026-10.md` | `orVideo` |
+| Transcrição (timestamps por frase) | Groq whisper (grátis, sem GPU) | `transcribe` |
+| Transcrição POR PALAVRA (corte, legenda, sincronia fina) | Groq whisper | `transcribeWords` |
+| Que modelos existem hoje + preço | catálogo vivo da OR | `node scripts/catalog.mjs [image\|video\|speech]` |
 
 **🎬 Lottie vs SVG vs vídeo (como decidir)**: *anima?* não → SVG estático
 (`recraftV41ProVector`) ou PNG (`gpt5ImageMini`). sim, **single-scene curto** p/
@@ -126,6 +138,7 @@ só (diferente do SSML, que não dá). (3) **história/diálogo com personagens*
 `geminiDialog` (2 vozes num request, precisa `GEMINI_API_KEY`) ou `manyVoices`
 (3+ personagens → 1 áudio por fala, encadeia). Cada personagem sua voz (das 30) +
 suas tags. Pra sincronizar com vídeo, transcreva com `transcribe()` → `[{start,end,text}]`.
+⚠️ **OpenRouter ignora parâmetros do provedor** (`speed`, `language`, `emotion`, `instructions`): só `model/input/voice/response_format` chegam. Entonação via OR = só o que vive no texto (tags Gemini/Grok/Fish). Comparativo real das APIs de voz em PT-BR (16 amostras, custo por livro): `~/Documentos/Notas/Arquivo/Estudos/Feito/vozes.md`.
 
 ## 3 padrões de ouro
 
@@ -248,8 +261,10 @@ web, PERGUNTE o link ao usuário (regra de ouro 3).
 - `references/lottie.md` — **Lottie** (animação vetorial leve): regras Skottie, builders, conversor SVG, render + **tabela de roteamento** pra biblioteca de design/motion taste
 - `references/text-to-lottie/` — biblioteca **design taste / motion taste / 12 recipes / chaptering** copiada do upgrade da [diffusionstudio/lottie](https://github.com/diffusionstudio/lottie) (EN, runtime-agnóstico, carregar sob demanda — roteamento em `lottie.md`; ignore `player-contract.md`, é Skottie-only)
 - `references/svg-animation.md` — **animar logo/SVG**: Lottie traço vs GSAP preenchido, track-matte (por que evitar), GSAP no Remotion (shim), vídeo IA frames (veo/grok)
-- `references/criar-video.md` — **CRIAR vídeo (Remotion)**: fluxo, regras de ouro, integração com os assets
-- `references/motion-design.md` — vocabulário de motion design PRO (técnicas dos 21 prompts oficiais)
+- `references/criar-video.md` — **CRIAR vídeo**: brief → beat table → prancha, Remotion vs HyperFrames, voz, sincronia por palavra, som/mix, checagem
+- `references/motion-design.md` — **o ofício de motion** (16 leis, composição, receitas, dicionário de eases) + vocabulário de técnicas
+- `references/editar-video.md` — **EDITAR vídeo gravado**: corte de fala, regras ffmpeg, layouts 9:16/PiP/zoom, legendas, B-roll, som, checagem
+- `references/modelos-2026-10.md` — retrato do catálogo (voz, vídeo, imagem nova) com preço; o vivo é `scripts/catalog.mjs`
 - `references/remotion-official/` — doc oficial completa do Remotion (37 regras; comece pelo `SKILL.md`)
 - `references/remotion-gotchas.md` — armadilhas do Remotion que custaram tempo
 - `video/examples/showcase/` — 21 prompts oficiais por categoria (inspiração, NÃO template)
@@ -269,4 +284,7 @@ web, PERGUNTE o link ao usuário (regra de ouro 3).
 - `scripts/lib/config.mjs` — config raw da chave (usado pelo setup)
 - `video/scripts/setup.mjs` — instala a engine Remotion (1x, só p/ vídeo)
 - `video/scripts/render.mjs` — render headless de vídeo Remotion (abre o MP4 ao fim)
+- `video/scripts/qa.mjs` — conferir render: `sheet` (prancha), `strip <t>` (quadros contíguos numa transição), `at` (instantes), `loud` (LUFS/true peak)
+- `scripts/catalog.mjs` — catálogo vivo de modelos de mídia da OR com preço/ficha/vozes
+- `scripts/models/or-speech.mjs` · `or-video.mjs` — caixas genéricas (qualquer TTS / qualquer modelo de vídeo da OR)
 - `video/examples/` — vídeos prontos de inspiração (não template — construa sob medida)

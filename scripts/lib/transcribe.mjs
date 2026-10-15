@@ -87,6 +87,38 @@ export async function transcribe(audioPath) {
   return segsFromVerbose(await res.json());
 }
 
+/**
+ * Transcrição PALAVRA A PALAVRA — a base de edição e de sincronia fina.
+ * Cortar fala, legendar palavra por palavra e pousar uma animação NA palavra
+ * exigem o tempo de cada palavra; segmentos (transcribe) não bastam.
+ * Groq e OpenAI aceitam timestamp_granularities[]=word com verbose_json.
+ * @param {string} audioPath
+ * @param {{language?: string}} [o]  ex: 'pt' (evita o detector errar em fala curta)
+ * @returns {Promise<{words: Array<{text,start,end}>, segments: Array<{start,end,text}>, duration: number}>}
+ */
+export async function transcribeWords(audioPath, o = {}) {
+  const backend = pickBackend();
+  if (!backend) throw new Error('Transcrição precisa de GROQ_API_KEY (grátis) ou OPENAI_API_KEY.');
+  const [endpoint, key, model] = backend === 'groq'
+    ? [GROQ_ENDPOINT, get('GROQ_API_KEY'), GROQ_MODEL]
+    : [OPENAI_ENDPOINT, get('OPENAI_API_KEY'), OPENAI_MODEL];
+  const fields = { model, response_format: 'verbose_json', temperature: '0',
+    'timestamp_granularities[]': 'word' };
+  if (o.language) fields.language = o.language;
+  // o 2º granularity (segment) entra como campo repetido
+  const { body, boundary } = multipart(fields, audioPath);
+  const extra = Buffer.from(`--${boundary}\r\nContent-Disposition: form-data; name="timestamp_granularities[]"\r\n\r\nsegment\r\n`);
+  const res = await fetch(endpoint, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${key}`, 'Content-Type': `multipart/form-data; boundary=${boundary}` },
+    body: Buffer.concat([extra, body]),
+  });
+  if (!res.ok) throw new Error(`STT ${backend} HTTP ${res.status}: ${(await res.text()).slice(0, 160)}`);
+  const d = await res.json();
+  const words = (d.words || []).map((w) => ({ text: w.word.trim(), start: +w.start, end: +w.end }));
+  return { words, segments: segsFromVerbose(d), duration: +d.duration || 0 };
+}
+
 // formata pra leitura: [MM:SS] texto
 export function formatTranscript(segs) {
   return segs.map((s) => {

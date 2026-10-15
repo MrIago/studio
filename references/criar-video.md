@@ -61,10 +61,36 @@ está disponível. Use a ESTRUTURA dos componentes; anime com `spring`/`interpol
   ⚠️ Cada vídeo é ÚNICO — analise paleta, comunicação, conteúdo, formato. Os exemplos
   são pra descobrir o possível e pegar técnicas, nunca clonar.
 
+## Antes do código: brief → roteiro → beat table → prancha
+
+O que separa vídeo bom de "slide com fade" se decide antes de abrir o editor
+(leia `motion-design.md`, a parte de ofício):
+
+1. **Brief** (pergunte o que faltar, em texto): para quê e para quem, formato e
+   duração, marca (cores hex, fontes, logo OFICIAL), referência de *movimento*,
+   tom, voz, música, CTA. Escreva `BRIEF.md` no projeto.
+2. **Roteiro com gancho**: os 3 primeiros segundos convencem a assistir até o fim
+   e funcionam sem som; corpo; pagamento que fecha o gancho; CTA. Nada de número
+   inventado.
+3. **Beat table** (`STORYBOARD.md`): por beat — tempo, fala, a ideia única, o que
+   aparece (o maior = o ponto), o movimento e eases, a transição de saída, o som.
+4. **Prancha**: renderize 1 still por beat (`npx remotion still … --frame=N`),
+   junte numa imagem e LEIA antes de construir o resto. Mostre ao usuário se o
+   estilo ainda não foi aprovado.
+5. Construa **uma seção, renderize, confira**; o sistema visual provado nela vale
+   para as outras. Cenas independentes podem ir para subagentes em paralelo.
+
+**Remotion ou HyperFrames?** A engine da studio é Remotion (React, frame-a-frame,
+já instalada). HyperFrames (HeyGen, HTML+GSAP, `npx hyperframes`) é a outra opção
+forte: lint/validate com checagem de contraste e mapa de animação; quem compara
+costuma achar o "liquid glass" dela mais bonito. Use Remotion por padrão; HyperFrames
+quando o usuário pedir ou quando o vídeo for overlay sobre filmagem editada
+(ver `editar-video.md`).
+
 ## Fluxo ao receber um pedido de vídeo
 
 1. **Entenda o vídeo** — formato (16:9 / 9:16 / 1:1), duração aproximada, estilo,
-   se tem narração/música. Se vago, proponha um roteiro curto e confirme.
+   se tem narração/música. Faça o brief e a beat table acima.
 2. **Garanta o workspace**: `node video/scripts/setup.mjs` (rápido se já existe).
    Crie a pasta do vídeo: `~/.studio-engine/src/videos/<nome>/Video.tsx` e
    registre no `src/Root.tsx` (1 import + entrada no array). NÃO crie projeto novo.
@@ -108,6 +134,26 @@ render: o preview é onde o usuário decide.
 - Easing de entrada: `Easing.bezier(0.16, 1, 0.3, 1)`. Overshoot: `(0.34, 1.56, 0.64, 1)`.
 - Separe **timing** (quando/quão rápido) de **mapping** (quais valores): faça um
   `progress` 0→1 e derive props dele.
+
+## Escolha da voz
+
+- **PT-BR com sotaque nativo** → `speech({ input, pick: 'ptbr' })` = MAI-Voice 2.1
+  (Microsoft) com voz `pt-BR-Rafael` (ou Caio/Pedro/Luana/Harper). São as únicas
+  vozes nativas pt-BR do catálogo da OR.
+- **Mais expressiva / tags de entrega** → `pick: 'expressiva'` (ElevenLabs v4).
+- **Emoção inline barata / personagens** → gemini (seção abaixo).
+- Gere 2-3 amostras da 1ª fala e deixe o usuário escolher: naturalidade você não
+  mede. Escreva números por extenso quando a leitura importar ("vinte por cento").
+- Nivele a loudness de cada fala igual (não escale a fala inteira pelo pico).
+- Re-transcreva a narração gerada e compare com o roteiro antes de montar.
+
+## Sincronia com a narração (palavra, não frase)
+
+`transcribeWords(arquivo, { language: 'pt' })` → `{ words:[{text,start,end}] }`.
+Pouse cada elemento na palavra que ele ilustra, entrando **0,15-0,25s antes** do
+início da palavra (o quadro de pouso coincide com a fala). Nunca divida uma seção
+em beats iguais. Revelação que leva `d` segundos começa em `palavra.start − d`.
+Tela parada por mais de ~1,5s sem nada acontecer = tela morta (audite).
 
 ## Narração (gemini-tts) — voz fluida, emoção e personagens
 
@@ -168,6 +214,23 @@ import { transcribe, formatTranscript } from '../scripts/lib/transcribe.mjs';
 const segs = await transcribe('public/<proj>/narr-1.wav'); // [{start,end,text}]
 // segs[i].start/end → from/dur de cada <Sequence>
 ```
+
+## Som e mix
+
+- Música: cama 14-20 dB sob a voz (ducking sob a fala), sai antes do CTA. Em
+  Remotion: `volume` da música baixo (~0,12-0,18) e confira medindo.
+- Efeitos: poucos, cada um preso a algo visível (tap macio quando algo pousa,
+  click seco em UI, ar em movimento real). Nada de laser/zap/whoosh em todo corte.
+  Comece o arquivo antes do quadro de contato pelo tempo de ataque dele.
+- Master final: −14 a −16 LUFS, true peak ≤ −1 dBTP. Meça o MP4:
+  `node video/scripts/qa.mjs loud out.mp4`. Se baixo, normalize com
+  `ffmpeg -i in.mp4 -c:v copy -af loudnorm=I=-15:TP=-1.5:LRA=11 out.mp4`.
+
+## Checagem do render (obrigatória antes de mostrar)
+
+`node video/scripts/qa.mjs sheet|strip|at|loud <mp4>` e **Read** nos PNGs: prancha
+geral, tiras contíguas em toda transição (pulo, parada morta, pisca), os 3
+primeiros segundos, e a loudness. Até 3 passes; o que sobrar, diga com honestidade.
 
 ## Integração com as caixas seladas (assets)
 
