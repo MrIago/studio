@@ -15,6 +15,16 @@
 //
 // ⚠️ A OR ignora parâmetros do provedor (speed, stability, instructions…): só
 // model/input/voice/response_format chegam. Tom = o que vive no texto.
+//
+// CONTROLE DE EMOÇÃO PELO TEXTO (testado 15/10/2026, transcrito de volta):
+//   • MAI-Voice: NADA de marcação. [tags] CORTAM a fala na 1ª frase; SSML é lido
+//     em voz alta ("speak version 1.0…"); "(animada)" é lido. Só pontuação e
+//     escrita falada ("cê", "tá", "pra", "ó") — o sotaque nativo faz o resto.
+//   • ElevenLabs v4: [curious] [excited] [warm] [happy] [laughs] funcionam em PT-BR
+//     e não são lidos. Melhor para variar emoção por cena.
+//   • Gemini 3.8: tags idem (ver gemini-tts.mjs); sai PCM.
+// Fala natural: escreva como se fala, não como se escreve ("tô", "pra", "cê",
+// "né", "ó", frases curtas com vírgula). Número por extenso quando a leitura importa.
 
 import { tts } from '../lib/audio.mjs';
 
