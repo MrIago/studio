@@ -28,6 +28,27 @@ Fallback 100% por código: **GIF clicável** (`<img>` dentro de `<a href=mp4>`).
 - Fontes Google: importe com pesos/subsets específicos (`loadFont('normal',{weights:['400','700'],subsets:['latin']})`) — senão gera warning de "21 network requests".
 - `import cairo` etc.: ao desenhar formas, use `<div>`/SVG/CSS — não há canvas API direto a menos que use `<HtmlInCanvas>` (Chrome 149+ com flag).
 
+## Vídeo narrado (aprendido nos tutoriais de vendedores, 15/10/2026)
+
+- **Legenda usa o TEXTO DO ROTEIRO, não o da transcrição.** A transcrição só dá o
+  tempo; o texto dela erra ("anexe" virou "anesse" na tela). Troque palavra a palavra
+  quando a contagem bate; onde não bate (voz diz "vinte por cento", STT escreve
+  "20%"), fique com a transcrição.
+- **`<Sequence>` zera o `useCurrentFrame()`**: cena que calcula por tempo absoluto
+  (âncora em palavra) não pode estar dentro de Sequence — renderize solta com fade
+  por intervalo.
+- **Âncora de palavra quebra calado com número**: a fala "vinte" vem transcrita "20".
+  Faça o lookup jogar erro com a frase inteira (`palavra X não achada em …`).
+- **loudnorm sozinho pode passar de 0 dBTP** (deu +0,9). Encadeie
+  `loudnorm=I=-15.5:TP=-2:LRA=11,alimiter=limit=0.8:level=false` e meça de novo.
+- **Duas cenas entrando juntas**: confira a tira contígua da passagem; a cena que sai
+  tem que terminar antes da próxima entrar.
+- Demo de app em 9:16: telas reais capturadas em 1080×1920 (Playwright, DPR 2,5) +
+  bbox de cada elemento → celular persistente, câmera que aproxima o elemento falado
+  (zoom ≤1,45, largura mínima de contexto 660px), holofote 0,3 + anel na cor da
+  marca, toque com click, barra de capítulos. Implementação de referência:
+  `video/examples/demo-app-9x16/` (shared.tsx + Video.tsx; inspiração, não template).
+
 ## OpenRouter áudio
 
 - Modelos de áudio **não aparecem por busca de keyword** em `/v1/models`. Filtre por `output_modalities`.
