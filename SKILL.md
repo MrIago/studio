@@ -112,6 +112,11 @@ seedream/gemini. Veja velocidade em `references/velocidade.md`.
 | Animar SVG PREENCHIDO (logo estilo original se montando) | GSAP (clip-path wipe, browser/app) | `svgToGsap` |
 | Tirar fundo sólido de logo/ícone (LOCAL, sem IA/custo) | bg-remove (flood fill) | `bgRemove` |
 | Fundo c/ paleta da marca + 65 styles | recraft-v3 | `recraftV3` |
+| **Voz de mulher** (escolhida na audição às cegas) | Gemini 3.8 Flash Lite · Vindemiatrix | `speech({pick:'mulher'})` |
+| **Voz de homem** (escolhida na audição às cegas) | Gemini 3.8 Flash Lite · Charon | `speech({pick:'homem'})` |
+| **Personagem gay** (escolhida na audição às cegas) | Gemini 3.8 Flash Lite · Pulcherrima | `speech({pick:'personagemGay'})` |
+| **Locutora** (escolhida na audição às cegas) | Gemini 3.8 Flash Lite · Despina | `speech({pick:'locutora'})` |
+| **Locutor** (escolhida na audição às cegas) | Gemini 3.8 Flash Lite · Iapetus | `speech({pick:'locutor'})` |
 | Narração PT-BR (sotaque nativo) | MAI-Voice 2.1 pt-BR-Rafael/Caio/Luana | `speech({pick:'ptbr'})` |
 | Narração mais expressiva | ElevenLabs v4 (brian/sarah…) | `speech({pick:'expressiva'})` |
 | Narração / voz com tags de emoção | gemini-tts (30 vozes + tags inline) | `geminiTts` |
@@ -138,7 +143,7 @@ só (diferente do SSML, que não dá). (3) **história/diálogo com personagens*
 `geminiDialog` (2 vozes num request, precisa `GEMINI_API_KEY`) ou `manyVoices`
 (3+ personagens → 1 áudio por fala, encadeia). Cada personagem sua voz (das 30) +
 suas tags. Pra sincronizar com vídeo, transcreva com `transcribe()` → `[{start,end,text}]`.
-⚠️ **OpenRouter ignora parâmetros do provedor** (`speed`, `language`, `emotion`, `instructions`): só `model/input/voice/response_format` chegam. Entonação via OR = só o que vive no texto (tags Gemini/Grok/Fish). Comparativo real das APIs de voz em PT-BR (16 amostras, custo por livro): `~/Documentos/Notas/Arquivo/Estudos/Feito/vozes.md`.
+⚠️ **Parâmetros via OpenRouter:** `instructions` (direção de estilo) chega só no Gemini TTS, no gpt-4o-mini-tts e na Fish (doc da OR, out/2026; no Gemini não é lida em voz alta). `speed`, `emotion` e afins não chegam: o resto da entonação vive no texto (tags Gemini/Grok/Fish/ElevenLabs). As cinco vozes da audição às cegas (mulher, homem, personagem gay, locutora, locutor) vêm com a instrução que foi usada no teste (`INSTRUCAO_AUDICAO` em `or-speech.mjs`); estudo completo em `~/Documentos/Projetos/Dr/.docs/vozes-openrouter-2026.md`. Comparativo anterior (16 amostras, custo por livro): `~/Documentos/Notas/Arquivo/Estudos/Feito/vozes.md`.
 
 ## 3 padrões de ouro
 

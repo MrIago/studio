@@ -5,6 +5,26 @@ o catálogo muda todo mês. Testado = gerei e conferi. O resto: só ficha e pre�
 
 ## Voz (35 modelos) — caixa genérica `speech()` (`scripts/models/or-speech.mjs`)
 
+**Vozes escolhidas (audição às cegas do Iago, 15/10/2026).** Os 27 modelos que falam pt-BR,
+ouvidos às cegas em 5 rodadas votadas, com nota de naturalidade e de precisão. Modelo escolhido:
+`google/gemini-3.8-flash-lite-tts` (~4 s e ~R$ 0,006 por áudio de 8 s). Para voz de pessoa,
+use estas por padrão:
+
+| Para | Voz | Chamada |
+|---|---|---|
+| Mulher | Vindemiatrix (gentil) | `speech({pick:'mulher'})` |
+| Homem | Charon (informativa) | `speech({pick:'homem'})` |
+| Personagem gay | Pulcherrima (o Google lista como feminina, mas neste modelo sai grave, 130–160 Hz, com ou sem instrução) | `speech({pick:'personagemGay'})` |
+| Locutora | Despina (macia) | `speech({pick:'locutora'})` |
+| Locutor | Iapetus (clara) | `speech({pick:'locutor'})` |
+
+As cinco vêm com a instrução de estilo da audição (`INSTRUCAO_AUDICAO`), que é como foram
+ouvidas; trocá-la muda o jeito de falar. Locutora e locutor foram escolhidos de ouvido para
+locução: no placar da audição, que media conversa com uma amiga, ficaram em 6º e 9º. Estudo,
+ranking e rodadas: `~/Documentos/Projetos/Dr/.docs/vozes-openrouter-2026.md`.
+
+Outros usos:
+
 | Uso | Modelo · voz | Preço | Status |
 |---|---|---|---|
 | Narração PT-BR nativa | `microsoft/mai-voice-2.1` · `pt-BR-Rafael` / Caio / Pedro / Luana / Harper (`:MAI-Voice-2.1`) | $22/M chars (~0,3cr por 150 chars) | ✅ testado, pronúncia certa |
@@ -12,7 +32,7 @@ o catálogo muda todo mês. Testado = gerei e conferi. O resto: só ficha e pre�
 | Mais expressiva (tags inline) | `elevenlabs/eleven-v4` · brian, sarah, george, alice… (90+ línguas) | $40/M | ✅ testado PT-BR |
 | Expressiva mais barata | `elevenlabs/eleven-v4-turbo` | $20/M | ficha |
 | Emoção inline + 30 vozes | `google/gemini-3.8-flash-tts` (só PCM → WAV) | ~centavos | ✅ testado (lê "pra" coloquial) |
-| Outras | Fish S2.1 Pro (deu 400 sem voz), MiniMax Speech 2.8 HD/Turbo, Qwen Audio 3.0, Grok Voice, Kokoro (barata, open), Voxtral (clonagem) | — | ficha |
+| Outras | Fish S2.1 Pro (deu 400 sem voz), MiniMax Speech 2.8 HD/Turbo, Qwen Audio 3.0, Grok Voice, Kokoro (barata, open), Voxtral (clonagem indisponível na OR em out/2026) | — | todas ouvidas na audição de 15/10/2026: Qwen Plus e Flash ficaram em 6º e 7º na rodada 1, as outras abaixo do 10º (ranking no estudo) |
 
 ## Vídeo IA (30 modelos) — caixa genérica `orVideo()` (`scripts/models/or-video.mjs`)
 

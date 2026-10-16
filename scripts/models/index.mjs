@@ -50,7 +50,12 @@ export const QUAL_USAR = {
   transparente:         { fn: 'gpt5ImageMini',        nota: 'overlay PNG RGBA real' },
   svg:                  { fn: 'recraftV41ProVector',  nota: 'ícone/logo vetorial — sem fallback' },
   paleta:               { fn: 'recraftV3',            nota: 'rgb_colors forçado (todos recraft têm)' },
-  // áudio
+  // áudio — vozes escolhidas na audição às cegas do Iago (15/10/2026), Gemini 3.8 Flash Lite
+  vozMulher:            { fn: 'speech',               nota: "pick:'mulher' = Gemini 3.8 Flash Lite · Vindemiatrix (escolhida na audição)" },
+  vozHomem:             { fn: 'speech',               nota: "pick:'homem' = Gemini 3.8 Flash Lite · Charon (escolhida na audição)" },
+  vozPersonagemGay:     { fn: 'speech',               nota: "pick:'personagemGay' = Gemini 3.8 Flash Lite · Pulcherrima (escolhida na audição)" },
+  vozLocutora:          { fn: 'speech',               nota: "pick:'locutora' = Gemini 3.8 Flash Lite · Despina (escolhida na audição para locução)" },
+  vozLocutor:           { fn: 'speech',               nota: "pick:'locutor' = Gemini 3.8 Flash Lite · Iapetus (escolhida na audição para locução)" },
   narracaoPtBr:         { fn: 'speech',               nota: "pick:'ptbr' = MAI-Voice 2.1 pt-BR-Rafael (vozes NATIVAS pt-BR); 'expressiva' = ElevenLabs v4" },
   narracaoTTS:          { fn: 'geminiTts',            nota: '30 vozes + tags emoção inline ([excited]/[whispers]); auto adapta tom' },
   videoQualquerModelo:  { fn: 'orVideo',              nota: 'os 30 de /videos; ficha/preço: node scripts/catalog.mjs video <id>' },
