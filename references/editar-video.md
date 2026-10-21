@@ -172,6 +172,46 @@ de B-roll uma vez só por vídeo.
 - Peça publicável: um subagente **crítico** com o render e as referências, com
   ordem de "esculachar, não elogiar": veredito, problemas com timecode, 5 correções.
 
+## Vídeo longo (10+ min) sem travar o computador
+
+Aprendido em 21/10/2026, editando aulas de 13 min do Lucas: o PC do Iago travou e
+desligou duas vezes. A causa e o jeito certo:
+
+- **Nunca um filtergraph com dezenas de `trim`.** Cada ramo `[0:v]trim=…` decodifica
+  o vídeo INTEIRO; 76 trechos = 76 leituras simultâneas de 1080p → memória estoura.
+  Funciona com 6 trechos, mata a máquina com 70. Use `video/scripts/cut-edl.sh`:
+  corta trecho por trecho (`-ss` antes do `-i`, `-t`, fade de 30 ms), 2 threads,
+  `nice 15`, e só no fim concatena e trata a voz numa passada.
+- **Pausas → EDL:** `silencedetect` (com `LC_ALL=C`, senão o awk do sistema pt-BR
+  arredonda pela vírgula) → `video/scripts/edl.py silencios.txt edl.json a:b …`
+  (trechos a manter; pausa >0,5 s vira ~0,3 s). Os erros/tomadas ruins saem
+  escolhendo os `a:b` a manter, lendo a transcrição.
+- **Não transcreva de novo depois do corte:** `video/scripts/mapwords.py` leva as
+  palavras do tempo original pro tempo do corte pela EDL. Zero chamada de API.
+- **Pasta de trabalho fora do `/tmp`.** O scratchpad da sessão vive em `/tmp` e
+  some quando o PC reinicia (perdi transcrição e EDL assim). Trabalho de edição
+  vai em `~/.studio-engine/work/<projeto>/`; os assets do render em `public/<id>/`.
+- **Render Remotion de vídeo longo com `OffthreadVideo`** (pior quando o mesmo
+  arquivo aparece 2× no quadro, ex. tela + câmera recortadas do mesmo master):
+  `--concurrency=2 --offthreadvideo-cache-size-in-bytes=536870912`, `nice 15`, e um
+  vigia que mata o render se `MemAvailable` < 1,5 GB. Com concurrency 3 sem limite
+  de cache a memória livre caiu de 9 GB pra 2,7 GB em 1 min.
+- **Uma coisa pesada por vez.** Nada de cortar um vídeo enquanto renderiza outro,
+  nem typecheck/build de projeto junto com render.
+- Acompanhe ao vivo (`Monitor`): progresso a cada N quadros + memória disponível.
+
+## Aula gravada (tela + câmera) — molde pronto
+
+`~/.studio-engine/src/videos/aula-kit/kit.tsx` (`AulaVideo`): a tela do app ocupa
+o quadro com zoom suave na caixa que a pessoa explica; a câmera recortada do
+mesmo master vira miniatura que cresce na abertura/fecho; capítulo no canto a cada
+assunto; motions de conta (`formula`), número (`stat`) e frase de efeito
+(`quote`, esconde a legenda enquanto aparece); legenda com correção de grafia.
+Tudo ancorado em FRASES (`at('a segunda métrica')`), nunca em segundos chutados.
+Uma aula nova = um `Video.tsx` de ~80 linhas (ex.: `aula-financeiro/`). Zooms:
+caixas medidas numa prancha de quadros a cada 30 s do master (`crop` da tela).
+Se a gravação tem a câmera invadindo o canto da tela, o kit tampa esse retângulo.
+
 ## Erros que custaram tempo a quem já fez
 
 - Cortar a tela de alguém falando e narrar com voz de IA por cima: parece que a
