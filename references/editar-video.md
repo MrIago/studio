@@ -85,6 +85,11 @@ Usa o wav2vec2 de português do WhisperX (GPU de 4 GB dá conta), guarda o texto
 tem e só troca os tempos; garante que nenhuma palavra começa antes da anterior. Como tudo
 está ancorado em palavras, o vídeo inteiro se ressincroniza sozinho.
 
+Depois de realinhar, **revise as janelas `FROM/TO` de todo cortinho** tirado do master: a
+última palavra pode ter andado para depois do `TO`, e aí ela sai do recorte e a âncora
+`at("…")` daquela frase quebra o bundle inteiro do Studio ("frase não achada"). `TO` = fim
+da última palavra + 0,05 s, medido nos tempos novos.
+
 ## Dois modos de trabalho — pergunte ANTES de começar (Iago, 24/10/2026)
 
 | Modo | Quando | Como |
@@ -93,6 +98,10 @@ está ancorado em palavras, o vídeo inteiro se ressincroniza sozinho.
 | **Autônomo** | ele vai sair / pediu "faz sozinho" | gere stills/pranchas, confira e corrija antes de mostrar |
 
 > "acho que você perde muito tempo vendo quadros… foca em criar os códigos, eu confiro manualmente"
+
+No modo manual a revisão é **no próprio vídeo**, no Studio: ele assiste e fala "no segundo X
+do vídeo Y, faz tal coisa". Página de storyboard (cenas com manter/talvez/tirar) foi
+testada e descartada — "melhor eu ver o vídeo e falar".
 
 ## Corte de fala
 
@@ -243,6 +252,34 @@ Tudo ancorado em FRASES (`at('a segunda métrica')`), nunca em segundos chutados
 Uma aula nova = um `Video.tsx` de ~80 linhas (ex.: `aula-financeiro/`). Zooms:
 caixas medidas numa prancha de quadros a cada 30 s do master (`crop` da tela).
 Se a gravação tem a câmera invadindo o canto da tela, o kit tampa esse retângulo.
+
+## Vídeo que mostra um app: regras de cena (série do Lucas, 24/10/2026)
+
+Aprovadas pelo Iago depois de 3 versões. Molde: `~/.studio-engine/src/videos/oficina-kit/`
+(`Phone`, `Camera`, `Face`, `ReelShell`) e as composições `msp-*`.
+
+- **Zoom é da CÂMERA, no quadro inteiro.** Quando a fala aponta um elemento, a cena toda
+  (fundo, celular, chapas) aproxima daquele ponto — `<Camera>` em volta do conteúdo, com
+  rosto e legenda FORA dela. Nunca ampliar a tela dentro do mock do celular: pixela, corta a
+  moldura e "quebra o mock". Dentro do aparelho o foco é só contorno + escurecer o resto (e a
+  tela rola até o elemento se ele estiver fora).
+- **Mostre a coisa exata que a fala cita.** "Marcar como recebido" pede o BOTÃO na tela onde
+  ele existe (Pedidos), não o card de resumo de outra tela. Antes de ancorar um foco, leia
+  a frase e pergunte: o que aparece nessa tela é o que ele está dizendo?
+- **Documento do app = o documento REAL.** Contrato, PDF, orçamento: gere com o gerador do
+  próprio app (importar o módulo com Bun e trocar só o que depende de navegador, como
+  carregar a logo) usando os dados da conta teste, rasterize (`pdftoppm -r 200`) e mostre as
+  páginas. Folha redesenhada em código parece maquete. Bônus: gerar o real achou um bug de
+  verdade no app (duas "Cláusula 1ª").
+- **Telas reais numa conta teste** com dados parecidos com os do cliente; capturar em @3 e
+  medir as caixas (`shots.json`) para foco/dedo/digitação.
+- **Rosto**: grande quando não há nada para mostrar; pequeno no canto inferior direito
+  enquanto o celular/papel está na tela (o canto fica livre); some só quando algo cobre o
+  canto (o quadro de giz).
+- **Estilo do mundo, não de componente**: material do nicho feito em código (madeira, aço
+  escovado, fita crepe, carimbo, faísca, giz) — nada de imagem gerada.
+- **Cortinho nasce de trecho da aula**: escolha frases de 25-40 s que se sustentam sozinhas,
+  gancho na fita do topo, mesmo kit. Uma aula de 12 min rendeu 10 cortinhos.
 
 ## Erros que custaram tempo a quem já fez
 
