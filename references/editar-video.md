@@ -281,6 +281,19 @@ Aprovadas pelo Iago depois de 3 versões. Molde: `~/.studio-engine/src/videos/of
 - **Cortinho nasce de trecho da aula**: escolha frases de 25-40 s que se sustentam sozinhas,
   gancho na fita do topo, mesmo kit. Uma aula de 12 min rendeu 10 cortinhos.
 
+## Pegadinhas de montagem (24/10/2026)
+
+- **Uma âncora que falha derruba o Studio inteiro** ("frase não achada" quebra o bundle
+  de TODAS as composições). Antes de abrir, rode um checador em Node que reproduz o
+  `anchors()` sobre cada `at("…")` do arquivo novo e lista FALTA/tempo.
+- **Camadas**: rosto e legenda ficam FORA da `<Camera>`; chapas/fitas das cenas de rosto
+  ficam DEPOIS do rosto (senão o card do CTA some atrás dele). Ordem: fundo+cena (câmera)
+  → rosto → enfeites das cenas de rosto → legenda → card final.
+- **Studio às vezes não pega a mudança** (bug "ainda está igual"): antes de caçar bug, gere
+  um still do frame (`remotion still … --frame=N`) e peça F5 no Studio.
+- **Render em fila, um por vez, solto do terminal** (`setsid nohup`), concurrency 2 e vigia
+  de memória; o acompanhamento só lê o log.
+
 ## Erros que custaram tempo a quem já fez
 
 - Cortar a tela de alguém falando e narrar com voz de IA por cima: parece que a
