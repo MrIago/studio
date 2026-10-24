@@ -311,3 +311,10 @@ web, PERGUNTE o link ao usuário (regra de ouro 3).
 - `scripts/catalog.mjs` — catálogo vivo de modelos de mídia da OR com preço/ficha/vozes
 - `scripts/models/or-speech.mjs` · `or-video.mjs` — caixas genéricas (qualquer TTS / qualquer modelo de vídeo da OR)
 - `video/examples/` — vídeos prontos de inspiração (não template — construa sob medida)
+
+## Brand sheets por projeto
+
+Antes de editar/criar vídeo de um projeto que já tem série, leia a brand sheet dele em
+`brands/` (estilo, peças do kit, cores, legenda, regras aprovadas). Projeto novo com
+série: ao fechar a primeira versão aprovada, escreva a sheet dele ali. Hoje:
+`brands/meu-serralheiro-pro.md`.
