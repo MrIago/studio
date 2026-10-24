@@ -312,9 +312,11 @@ web, PERGUNTE o link ao usuário (regra de ouro 3).
 - `scripts/models/or-speech.mjs` · `or-video.mjs` — caixas genéricas (qualquer TTS / qualquer modelo de vídeo da OR)
 - `video/examples/` — vídeos prontos de inspiração (não template — construa sob medida)
 
-## Brand sheets por projeto
+## Brand sheet: mora no PROJETO, não aqui
 
-Antes de editar/criar vídeo de um projeto que já tem série, leia a brand sheet dele em
-`brands/` (estilo, peças do kit, cores, legenda, regras aprovadas). Projeto novo com
-série: ao fechar a primeira versão aprovada, escreva a sheet dele ali. Hoje:
-`brands/meu-serralheiro-pro.md`.
+Esta skill é genérica (conhecimento, recursos, processo). O estilo de vídeo de cada marca
+(peças, cores, fontes, legenda, regras aprovadas) fica no repo do projeto, em
+`.claude/rules/project/brand-videos.md`, e carrega sozinho quando se trabalha nele.
+Antes de criar/editar vídeo de um projeto, procure esse arquivo; se a série não tem um,
+escreva-o ao fechar a primeira versão aprovada. Exemplo completo: a do Meu Serralheiro Pro
+(`~/Documentos/Projetos/Lasy-Softwares/meuserralheiropro/.claude/rules/project/brand-videos.md`).
