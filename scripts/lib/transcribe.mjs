@@ -108,11 +108,19 @@ export async function transcribeWords(audioPath, o = {}) {
   // o 2º granularity (segment) entra como campo repetido
   const { body, boundary } = multipart(fields, audioPath);
   const extra = Buffer.from(`--${boundary}\r\nContent-Disposition: form-data; name="timestamp_granularities[]"\r\n\r\nsegment\r\n`);
-  const res = await fetch(endpoint, {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${key}`, 'Content-Type': `multipart/form-data; boundary=${boundary}` },
-    body: Buffer.concat([extra, body]),
-  });
+  // Groq grátis limita requisições por minuto: 429 → espera o que a resposta pede e tenta de novo
+  let res;
+  for (let tentativa = 0; tentativa < 8; tentativa++) {
+    res = await fetch(endpoint, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${key}`, 'Content-Type': `multipart/form-data; boundary=${boundary}` },
+      body: Buffer.concat([extra, body]),
+    });
+    if (res.status !== 429) break;
+    const msg = await res.text();
+    const s = +(msg.match(/try again in ([\d.]+)s/)?.[1] ?? 0) || +(res.headers.get('retry-after') ?? 0) || 15;
+    await new Promise((r) => setTimeout(r, (s + 1) * 1000));
+  }
   if (!res.ok) throw new Error(`STT ${backend} HTTP ${res.status}: ${(await res.text()).slice(0, 160)}`);
   const d = await res.json();
   const words = (d.words || []).map((w) => ({ text: w.word.trim(), start: +w.start, end: +w.end }));

@@ -62,6 +62,38 @@ para dentro da studio.
 8. **Itere em cópias** ("mude só X, mantenha o resto") e **grave a lição**: ao
    receber uma nota, corrija E escreva a regra aqui (ou no preset do projeto).
 
+## Sincronia fina: alinhamento forçado (WhisperX) no áudio FINAL
+
+O tempo por palavra do Whisper (Groq, faster-whisper) é aproximado: no vídeo do Lucas
+(24/10/2026) as palavras vinham, em média, **0,15 s adiantadas**, e palavras depois de
+pausa vinham até 2 s antes (o Whisper "estica" a palavra por cima do silêncio). Legenda e
+destaques ancorados nisso chegam antes da fala — o Iago notou na hora.
+
+Depois de travar o corte, rode o alinhamento forçado no áudio FINAL e use esses tempos:
+
+```bash
+# uma vez: venv usando o torch do sistema (sem baixar outro; o pip cheio de deps lotou o disco)
+python3 -m venv --system-site-packages ~/.venvs/whisperx
+~/.venvs/whisperx/bin/pip install --no-cache-dir --no-deps whisperx torchaudio==<versão do torch>
+~/.venvs/whisperx/bin/pip install --no-cache-dir transformers nltk pandas omegaconf
+# por vídeo: transcrição aproximada → tempos exatos
+ffmpeg -i master.mp4 -vn -ac 1 -ar 16000 final.wav
+~/.venvs/whisperx/bin/python video/scripts/align-words.py final.wav words.json words-alinhado.json
+```
+
+Usa o wav2vec2 de português do WhisperX (GPU de 4 GB dá conta), guarda o texto que você já
+tem e só troca os tempos; garante que nenhuma palavra começa antes da anterior. Como tudo
+está ancorado em palavras, o vídeo inteiro se ressincroniza sozinho.
+
+## Dois modos de trabalho — pergunte ANTES de começar (Iago, 24/10/2026)
+
+| Modo | Quando | Como |
+|---|---|---|
+| **Conferência manual** (padrão quando o usuário está junto) | ele quer ver logo e ajustar pelo chat | escreva tudo pelo CÓDIGO + transcrição palavra a palavra (o tempo de cada fala já está nela) e abra no Remotion Studio; NÃO gere pranchas de quadros a cada passo — ele assiste e manda os ajustes |
+| **Autônomo** | ele vai sair / pediu "faz sozinho" | gere stills/pranchas, confira e corrija antes de mostrar |
+
+> "acho que você perde muito tempo vendo quadros… foca em criar os códigos, eu confiro manualmente"
+
 ## Corte de fala
 
 - **Corte entre frases, nunca dentro.** Frase = o que se diz num fôlego. Tire o ar

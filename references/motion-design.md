@@ -61,6 +61,22 @@ e os TikToks de "saas motion design" mais curtidos (out/2026).
     DEPOIS wipe que começa = "travou". Junte num gesto só, mesmo ease simétrico.
 16. **Fontes falham calado.** Webfont que não carregou vira "quase Arial" sem erro.
     Confirme que carregou antes de renderizar (`document.fonts.check(...)`).
+17. **Nada para de vez.** Agrupe o que anda junto num pai e mova o grupo; atrase cada filho
+    2-3 quadros; comece o próximo movimento antes do anterior assentar. Movimentos sobrepostos
+    viram um gesto contínuo; é a diferença entre "parece um site" e "parece um filme". Câmera
+    idem: cada movimento num suporte próprio, encadeado, começando antes do anterior terminar.
+18. **Gesto de mão humana.** Cursor anda em arco, nunca em linha reta; todo clique tem uma
+    pressãozinha; o cursor hesita entre uma coisa e outra quando a história pede. Contador sobe
+    em ~1s (legível, sem arrastar). Cards entram um de cada vez e o ✓ só aparece depois que o
+    card pousou.
+19. **Vetor no zoom, não print.** UI exportada como SVG fica nítida quando a câmera aproxima;
+    screenshot borra. Telas desenhadas em outra largura (1440 num vídeo 1920): trave o canvas no
+    tamanho do vídeo e posicione tudo a partir do centro.
+20. **60 fps para câmera lenta.** Movimento lento a 24/30 fps treme. Para documentário e paralaxe,
+    60 fps (o render dobra, vale).
+
+Fontes de 17-20: Sanji Nai-Chien (vídeo de lançamento de SaaS feito com Claude, comparado lado
+a lado com um motion designer, out/2026) e o breakdown do Mohit G. (`animacao-em-camadas.md`).
 
 ### Composição do quadro
 
@@ -92,6 +108,8 @@ e os TikToks de "saas motion design" mais curtidos (out/2026).
   fixo de papel), Apple (ícone 3D com sombra macia, muito respiro, uma frase por
   tela), luxo/fashion (textural, lento), startup (sans moderna, branco/bege),
   documentário (movimento lento + callouts), 3Blue1Brown (matemática que se desenha).
+  Documentário em camadas (pintura ou papel recortado com paralaxe, personagem que respira,
+  transição por dentro de um objeto): `animacao-em-camadas.md`.
 
 ## 2 · Receitas (Remotion: `useCurrentFrame` + `interpolate`/`spring`; HyperFrames: GSAP pausado)
 

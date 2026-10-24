@@ -1,0 +1,35 @@
+{
+ "name": "conversa",
+ "seconds": 65.59,
+ "capturedFps": 12.9,
+ "marks": [
+  {
+   "label": "painel",
+   "t": 0
+  },
+  {
+   "label": "enviou",
+   "t": 15.408
+  },
+  {
+   "label": "rodando",
+   "t": 15.429
+  },
+  {
+   "label": "fim",
+   "t": 40.978
+  },
+  {
+   "label": "confirmou",
+   "t": 49.138
+  },
+  {
+   "label": "rodando",
+   "t": 49.187
+  },
+  {
+   "label": "fim",
+   "t": 59.081
+  }
+ ]
+}

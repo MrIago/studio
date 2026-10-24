@@ -33,3 +33,10 @@ ideias — a execução final é sempre análise + decisão pro caso à frente d
 
 Conforme a skill criar vídeos bons, guarde aqui o projeto (ou um resumo + o MP4) como
 referência viva — ex: a intro da própria studio. Ainda assim: inspiração, não template.
+
+- **quadro-desenhado/**: o vídeo da arquitetura da AdzHub (24/10/2026, 11,6 min). Quadro no traço
+  do Excalidraw que se desenha junto com a narração, câmera num mundo só, telas reais do app em
+  janelas desenhadas, a captura das telas e a voz por trecho. Método em
+  `references/quadro-desenhado.md` e `references/gravar-telas.md`.
+- **demo-app-9x16/**: tour de app real num celular persistente, em 9:16 (ver
+  `references/remotion-gotchas.md`, vídeo narrado).

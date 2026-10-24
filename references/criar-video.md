@@ -22,8 +22,8 @@ Não se cria um projeto Remotion por vídeo. Há **um workspace só**, em
 - **Código** → `src/videos/<nome>/` (uma pasta por vídeo). **Assets** →
   `public/<nome>/` (isolados — sempre prefixe os assets com a pasta do projeto,
   ex: `staticFile("<nome>/bg.jpg")`). **MP4 final** → `~/studio/<nome>/<nome>.mp4`.
-- Vídeo NOVO = **pasta NOVA** (`src/videos/<novo>/` + `public/<novo>/`) + 1 linha no
-  `src/Root.tsx` (import + entrada no array). NUNCA reuse a pasta/assets de um vídeo
+- Vídeo NOVO = **pasta NOVA** (`src/videos/<novo>/` + `public/<novo>/`). O
+  `src/Root.tsx` acha o `Video.tsx` sozinho: não edite o Root. NUNCA reuse a pasta/assets de um vídeo
   existente — senão sobrescreve. Editar um vídeo antigo = abrir o preview e mexer
   no `.tsx` dele (os assets já estão lá, nada se perde).
 - Antes de criar assets pra um vídeo novo, confira se a pasta `public/<nome>/` já
@@ -53,6 +53,16 @@ está disponível. Use a ESTRUTURA dos componentes; anime com `spring`/`interpol
   37 regras). Comece pelo `SKILL.md` dela; carregue a regra específica quando precisar.
 - **Motion design pro** → `references/motion-design.md`: vocabulário de técnicas. Leia
   antes de um vídeo que precisa impressionar — pra não cair em "slide com fade".
+- **Profundidade a partir de imagem parada** → `references/animacao-em-camadas.md`
+  (camadas, paralaxe, personagem articulado, transições; serve para papel recortado).
+- **Série para redes sociais** → `references/serie-redes-sociais.md` (kit, roteiro de
+  short, formatos por plataforma, produção em lote, esteira de produção). O que postar, a
+  chamada de cada plataforma, publicar por API e medir ficam na skill `growth`.
+- **Explicativo desenhado à mão** → `references/quadro-desenhado.md` (traço do Excalidraw
+  que se desenha com a voz, câmera num mundo só, telas reais do app dentro do quadro; código
+  em `video/examples/quadro-desenhado/`).
+- **Gravar as telas de um app** → `references/gravar-telas.md` (Chrome headless por CDP,
+  cursor desenhado, marcas nos eventos, conversa com agente, limpeza).
 - **Blocos prontos** → `~/.studio-engine/src/components/` (importe/crie).
 - **Armadilhas** → `references/remotion-gotchas.md`.
 - **Assets pela studio** → as caixas de `scripts/models/` geram imagem/voz/música.
@@ -92,8 +102,9 @@ quando o usuário pedir ou quando o vídeo for overlay sobre filmagem editada
 1. **Entenda o vídeo** — formato (16:9 / 9:16 / 1:1), duração aproximada, estilo,
    se tem narração/música. Faça o brief e a beat table acima.
 2. **Garanta o workspace**: `node video/scripts/setup.mjs` (rápido se já existe).
-   Crie a pasta do vídeo: `~/.studio-engine/src/videos/<nome>/Video.tsx` e
-   registre no `src/Root.tsx` (1 import + entrada no array). NÃO crie projeto novo.
+   Crie a pasta do vídeo: `~/.studio-engine/src/videos/<nome>/Video.tsx`, exportando
+   `Video`, `ID`, `FPS`, `DURATION` (e `WIDTH`/`HEIGHT` se não for 1920×1080). O
+   `src/Root.tsx` acha o arquivo sozinho. NÃO crie projeto novo.
 3. **Planeje os assets ANTES** (mesma regra de imagem): liste tudo que o vídeo
    precisa — imagens (slides/hero/ícones), narração (por trecho), música. Colete
    referências externas ANTES (peça links ao usuário, um por vez). Gere os assets
@@ -129,14 +140,46 @@ render: o preview é onde o usuário decide.
   `<Video>`/`<Audio>` (@remotion/media).
 - **Atrasar/limitar** conteúdo: `<Sequence from=… durationInFrames=…>`
   (`layout="none"` pra conteúdo inline).
-- **Dimensão/fps/duração** no `src/Root.tsx` (`<Composition>`); duração dinâmica
-  por áudio via `calculateMetadata` (ver regra oficial).
+- **Dimensão/fps/duração** nos exports do `Video.tsx` (`WIDTH`, `HEIGHT`, `FPS`,
+  `DURATION`); duração dinâmica por áudio exportando `calculateMetadata` (ver regra oficial).
 - Easing de entrada: `Easing.bezier(0.16, 1, 0.3, 1)`. Overshoot: `(0.34, 1.56, 0.64, 1)`.
 - Separe **timing** (quando/quão rápido) de **mapping** (quais valores): faça um
   `progress` 0→1 e derive props dele.
 
+## Construa leve desde o primeiro componente (render rápido)
+
+O render roda pelo processador: cada quadro é a página inteira pintada de novo. O que custa
+caro numa página web parada custa caro vezes milhares de quadros. Estas regras vêm de medições
+(detalhe e números em `remotion-gotchas.md`) e valem para TODO vídeo novo:
+
+1. **Textura pequena e repetida, nunca grande por peça.** Grão, papel, ruído: ladrilho de
+   256-512 px em `<pattern>`/`background-repeat`. Uma textura de 2048 px pintada em cada peça
+   deixava o quadro 4× mais lento, e o ladrilho de 512 px saiu idêntico a olho.
+2. **Gravações e vídeos com `<Video>` do `@remotion/media`**, nunca `OffthreadVideo`, e no
+   tamanho em que aparecem: tela que aparece pequena ou média vai em 720p
+   (`scale_cuda` pela NVIDIA, comando em `remotion-gotchas.md`).
+3. **Filtro caro só onde aparece:** `drop-shadow`, `blur`, `feTurbulence`/`feDisplacementMap`
+   e `mix-blend-mode` em dezenas de elementos somam. Prefira sombra pronta em PNG ou
+   `box-shadow` em forma retangular, e ruído pronto em imagem no lugar de `feTurbulence`.
+4. **Imagem no tamanho de uso:** foto que aparece com 400 px de largura não precisa de 4000 px.
+5. **Meça cedo, não no fim:** assim que a primeira cena existir, renderize 3 segundos dela com
+   `--log=verbose` e leia `capture => N ms`. Acima de ~300 ms por quadro em 1080p, ache o culpado
+   antes de fazer as outras cenas: renderize o mesmo trecho desligando uma coisa por vez.
+6. **Render final:** Remotion atualizado, `--gl=angle-egl --concurrency=4
+   --hardware-acceleration=if-possible --video-bitrate=8M`, e prancha procurando pedaço repetido.
+
 ## Escolha da voz
 
+- **Narração sem emoção é reprovada** (Iago, 22/10/2026, vídeo explicativo fofo:
+  OpenAI marin soou "extremamente desanimada"). Padrão para explicativo animado:
+  **Gemini 3.8 Flash TTS via OpenRouter** (`google/gemini-3.8-flash-tts`) com **tags
+  de emoção no texto** (`[excited]`, `[happy]`) + `instructions` de narradora animada.
+  Vozes femininas com energia: Laomedeia (upbeat), Zephyr, Autonoe, Leda.
+- Sem poder ouvir, escolha entre opções pela **variação de entonação**: desvio-padrão
+  do F0 em semitons (a mais animada tem o maior) + transcrição limpa. Laomedeia deu
+  sd ~4 st contra ~3 st das outras.
+- Saldo: se a OR responder 402, avise o Iago na hora (ele recarrega); não troque por
+  uma voz pior em silêncio.
 - **PT-BR com sotaque nativo** → `speech({ input, pick: 'ptbr' })` = MAI-Voice 2.1
   (Microsoft) com voz `pt-BR-Rafael` (ou Caio/Pedro/Luana/Harper). São as únicas
   vozes nativas pt-BR do catálogo da OR.
@@ -257,8 +300,9 @@ Duração do vídeo segue a narração: pegue a duração do áudio (ver
 
 ## Stack mínima de um projeto
 
-`src/Root.tsx` (registra `<Composition>`) · `src/<Video>.tsx` (a composição que
-você escreve) · `public/` (assets) · `package.json` (remotion + @remotion/media).
+`src/Root.tsx` (acha e registra cada `src/videos/<nome>/Video.tsx`, não se edita) ·
+`src/videos/<nome>/Video.tsx` (a composição que você escreve) · `public/<nome>/`
+(assets) · `package.json` (remotion + @remotion/media).
 O `render.mjs` faz bundle + render headless + abre o MP4.
 
 ## Quando aprofundar

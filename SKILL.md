@@ -24,6 +24,17 @@ Quando o usuário pedir um **vídeo**, distinga:
   o vídeo sob medida e monta os assets da studio. → `references/criar-video.md`
   **e** `references/motion-design.md` (o ofício: uma ideia por beat, holofote,
   mundo persistente, eases, som).
+  - Imagem parada (pintura, foto, papel recortado) que ganha profundidade, câmera,
+    personagem que respira e transição por dentro de um objeto →
+    `references/animacao-em-camadas.md`.
+  - Série de posts para um perfil (reels, carrosséis, stories; kit, roteiro de short,
+    formatos por plataforma, produção em lote, esteira de produção) →
+    `references/serie-redes-sociais.md`. Estratégia (o que postar, chamada por
+    plataforma, comentário que vira direct, publicar por API, medir) → skill `growth`.
+  - Explicativo desenhado à mão (quadro no traço do Excalidraw que se desenha junto com a
+    narração, câmera num mundo só, telas reais do app em janelas desenhadas) →
+    `references/quadro-desenhado.md`; gravar as telas de um app web logado →
+    `references/gravar-telas.md`.
 - **EDITAR** = o usuário gravou (câmera falando, tela+câmera, entrevista): cortar
   respiros e erros, legenda, zoom, PiP, B-roll, música. → `references/editar-video.md`.
 - **GERAR** = IA prompt→vídeo ou imagem→vídeo: `orVideo({ model, … })` cobre os 30
@@ -34,6 +45,10 @@ Em qualquer um: **plano aprovado antes de construir** (brief → beat table →
 prancha de stills), **confira o render lendo quadros** (`video/scripts/qa.mjs`)
 e **meça a loudness**; você não assiste nem ouve, então não afirme que "ficou bom"
 sem esses números. Nota do usuário vira regra escrita na reference certa.
+Ao CRIAR, construa leve desde a primeira cena e meça 3 s de render cedo
+(`criar-video.md`, "Construa leve desde o primeiro componente"): textura pequena
+repetida, `<Video>` do @remotion/media com gravação em 720p, filtro caro só onde
+aparece. Medido: um trecho de 30 s caiu de 522 s para 100 s e um reel de 35 s, de 381 s para 132 s.
 
 ## Animar logo/SVG (Lottie traço vs GSAP preenchido)
 
@@ -272,7 +287,10 @@ web, PERGUNTE o link ao usuário (regra de ouro 3).
 - `references/modelos-2026-10.md` — retrato do catálogo (voz, vídeo, imagem nova) com preço; o vivo é `scripts/catalog.mjs`
 - `references/remotion-official/` — doc oficial completa do Remotion (37 regras; comece pelo `SKILL.md`)
 - `references/remotion-gotchas.md` — armadilhas do Remotion que custaram tempo
+- `references/quadro-desenhado.md`: **explicativo desenhado à mão** (rough.js, letra Virgil, mundo com câmera, linha do tempo nas palavras da narração, telas gravadas dentro do quadro, render)
+- `references/gravar-telas.md`: **gravar telas de um app web** para vídeo (CDP, cursor desenhado, marcas, conversa com agente, limpeza do que a gravação cria)
 - `video/examples/showcase/` — 21 prompts oficiais por categoria (inspiração, NÃO template)
+- `video/examples/quadro-desenhado/`: o código do vídeo da arquitetura da AdzHub (lib do traço, câmera, linha do tempo, captura)
 
 ## Scripts
 
