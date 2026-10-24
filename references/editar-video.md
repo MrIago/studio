@@ -258,11 +258,10 @@ Se a gravação tem a câmera invadindo o canto da tela, o kit tampa esse retân
 Aprovadas pelo Iago depois de 3 versões. Molde: `~/.studio-engine/src/videos/oficina-kit/`
 (`Phone`, `Camera`, `Face`, `ReelShell`) e as composições `msp-*`.
 
-- **Zoom é da CÂMERA, no quadro inteiro.** Quando a fala aponta um elemento, a cena toda
-  (fundo, celular, chapas) aproxima daquele ponto — `<Camera>` em volta do conteúdo, com
-  rosto e legenda FORA dela. Nunca ampliar a tela dentro do mock do celular: pixela, corta a
-  moldura e "quebra o mock". Dentro do aparelho o foco é só contorno + escurecer o resto (e a
-  tela rola até o elemento se ele estiver fora).
+- **Zoom: o `<Camera>` do kit oficina foi REPROVADO** (Iago, 24/10/2026: "ficou muita coisa
+  errada"). Zoom dentro do mock também foi reprovado. O jeito aprovado é o do quadro da
+  AdzHub (`~/.studio-engine/src/videos/adzhub-*`, `quadro-desenhado.md`): estude esse código
+  antes de fazer qualquer zoom. Na dúvida, sem zoom: contorno + escurecer o resto.
 - **Mostre a coisa exata que a fala cita.** "Marcar como recebido" pede o BOTÃO na tela onde
   ele existe (Pedidos), não o card de resumo de outra tela. Antes de ancorar um foco, leia
   a frase e pergunte: o que aparece nessa tela é o que ele está dizendo?

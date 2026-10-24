@@ -12,6 +12,8 @@ export { recraftV41ProVector } from './recraft-v4-1-pro-vector.mjs';
 // áudio — TTS: gemini-tts é o PADRÃO (tags de emoção inline + multi-personagem).
 export { geminiTts, geminiDialog, manyVoices } from './gemini-tts.mjs';
 export { lyria3 } from './lyria-3.mjs';
+// música LOCAL na GPU (audio.cpp + Stable Audio 3 small music), sem API e sem custo. Ver references/sons.md
+export { stableAudioLocal } from './stable-audio-local.mjs';
 // voz genérica: QUALQUER TTS da OR (MAI pt-BR nativo, ElevenLabs v4, Gemini 3.8…)
 export { speech, PICKS as SPEECH_PICKS } from './or-speech.mjs';
 // vídeo IA genérico: QUALQUER modelo de /videos (Seedance, Kling, Veo fast/lite, Wan…)
@@ -60,7 +62,9 @@ export const QUAL_USAR = {
   narracaoTTS:          { fn: 'geminiTts',            nota: '30 vozes + tags emoção inline ([excited]/[whispers]); auto adapta tom' },
   videoQualquerModelo:  { fn: 'orVideo',              nota: 'os 30 de /videos; ficha/preço: node scripts/catalog.mjs video <id>' },
   dialogoPersonagens:   { fn: 'geminiDialog',         nota: '2 vozes num request (precisa GEMINI_API_KEY); 3+ → manyVoices' },
-  musica:               { fn: 'lyria3',               nota: 'clip ~31s/~4cr · pro ~2,6min/~8cr (único de música)' },
+  musica:               { fn: 'lyria3',               nota: 'clip ~31s/~4cr · pro ~2,6min/~8cr (único de música na OR)' },
+  musicaLocal:          { fn: 'stableAudioLocal',     nota: 'LOCAL na GPU, grátis, até 120 s (~25 s pra gerar 2 min); aprovada nos reels do casei.me' },
+  efeitoSonoro:         { fn: 'sons.mjs',             nota: 'biblioteca curada (12) + 696 CC0 da Kenney: node scripts/sons.mjs [buscar|pegar|prancha]; faltou → sons.mjs sintetizar → guardar. Efeito gerado por IA, não' },
   // lottie (animação vetorial leve — escrita à mão, validada no render Remotion)
   lottieVetorial:       { fn: 'lottie',               nota: 'logo/loader/data-viz animado — .json p/ site/app OU camada <Lottie> no vídeo; Claude ESCREVE o JSON, NÃO é API' },
   svgAnimado:           { fn: 'svgToLottie',          nota: 'SVG→Lottie .json TRAÇO (stroke+trim/draw-on) — pega TODOS os <path>. Filled NÃO (trim só desenha traço)' },

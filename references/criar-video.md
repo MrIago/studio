@@ -265,6 +265,10 @@ const segs = await transcribe('public/<proj>/narr-1.wav'); // [{start,end,text}]
 - Efeitos: poucos, cada um preso a algo visível (tap macio quando algo pousa,
   click seco em UI, ar em movimento real). Nada de laser/zap/whoosh em todo corte.
   Comece o arquivo antes do quadro de contato pelo tempo de ataque dele.
+  De onde tirar: a biblioteca da studio (`node scripts/sons.mjs`, catálogo com volume
+  sugerido; `pegar … --para public/sfx`). Faltou o som, sintetize em código
+  (`sons.mjs sintetizar`) e escolha de ouvido na prancha; efeito gerado por IA, não.
+  Tudo em `references/sons.md`.
 - Master final: −14 a −16 LUFS, true peak ≤ −1 dBTP. Meça o MP4:
   `node video/scripts/qa.mjs loud out.mp4`. Se baixo, normalize com
   `ffmpeg -i in.mp4 -c:v copy -af loudnorm=I=-15:TP=-1.5:LRA=11 out.mp4`.

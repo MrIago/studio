@@ -1,10 +1,10 @@
 ---
 name: studio
-description: Estúdio de geração de mídia por IA via OpenRouter — gera e edita IMAGENS (qualidade premium, realismo com pessoas, ícones transparentes, logos SVG, paleta de marca, 65 estilos artísticos), compõe cenas fiéis com personagens/famosos a partir de fotos de referência, narração de VOZ (30 vozes com emoção inline e diálogo multi-personagem), MÚSICA instrumental, CRIA VÍDEO com motion design profissional (Remotion/HyperFrames: explicativo, tutorial narrado, lançamento de produto, reels 9:16, intro), EDITA VÍDEO GRAVADO (talking head/YouTube/reel: corta respiros e erros pela transcrição palavra a palavra, legenda, zoom/punch-in, câmera em miniatura sobre animação, B-roll, música e efeitos, loudness) e GERA vídeo por IA (30 modelos: Veo, Seedance, Kling, Wan, Runway…). Voz PT-BR nativa (MAI-Voice) e ElevenLabs v4. Catálogo vivo de modelos com preço. Use sempre que o usuário quiser gerar/editar imagem, criar ícone/logo/asset, fazer um post, compor uma cena com pessoa específica, gerar narração/trilha sonora, contar uma história com vozes, criar/montar um vídeo, editar uma gravação, fazer motion graphics ou um tutorial em vídeo — mesmo que não diga "OpenRouter", "Remotion" ou "edição".
+description: Estúdio de geração de mídia por IA via OpenRouter — gera e edita IMAGENS (qualidade premium, realismo com pessoas, ícones transparentes, logos SVG, paleta de marca, 65 estilos artísticos), compõe cenas fiéis com personagens/famosos a partir de fotos de referência, narração de VOZ (30 vozes com emoção inline e diálogo multi-personagem), MÚSICA instrumental (Lyria ou local na GPU, grátis), EFEITOS SONOROS (biblioteca com catálogo: whoosh, pop, carimbo, clique, câmera, sino… + 696 sons CC0 + síntese por código), CRIA VÍDEO com motion design profissional (Remotion/HyperFrames: explicativo, tutorial narrado, lançamento de produto, reels 9:16, intro), EDITA VÍDEO GRAVADO (talking head/YouTube/reel: corta respiros e erros pela transcrição palavra a palavra, legenda, zoom/punch-in, câmera em miniatura sobre animação, B-roll, música e efeitos, loudness) e GERA vídeo por IA (30 modelos: Veo, Seedance, Kling, Wan, Runway…). Voz PT-BR nativa (MAI-Voice) e ElevenLabs v4. Catálogo vivo de modelos com preço. Use sempre que o usuário quiser gerar/editar imagem, criar ícone/logo/asset, fazer um post, compor uma cena com pessoa específica, gerar narração/trilha sonora, contar uma história com vozes, pôr efeito sonoro num vídeo, criar/montar um vídeo, editar uma gravação, fazer motion graphics ou um tutorial em vídeo — mesmo que não diga "OpenRouter", "Remotion" ou "edição".
 license: MIT
 metadata:
   author: mriago
-  version: 0.3.0
+  version: 0.4.0
 ---
 
 # studio
@@ -137,6 +137,9 @@ seedream/gemini. Veja velocidade em `references/velocidade.md`.
 | Narração / voz com tags de emoção | gemini-tts (30 vozes + tags inline) | `geminiTts` |
 | Diálogo / história com personagens | gemini-tts multi-voz | `geminiDialog` / `manyVoices` |
 | Música instrumental | lyria-3 (clip ~31s loop / pro ~2,6min trilha) | `lyria3` |
+| Música instrumental GRÁTIS, até 2 min (aprovada nos reels do casei.me) | Stable Audio 3 small music, LOCAL na GPU (~25 s por 2 min) | `stableAudioLocal` |
+| **Efeito sonoro** (whoosh, pop, carimbo, clique, câmera, sino…) | biblioteca `sons/`: 12 curados (gravações do Remotion + sintetizados) + 696 CC0 da Kenney (`references/sons.md`) | `node scripts/sons.mjs` |
+| Efeito que não está na biblioteca | SINTETIZAR em código (receitas pop, carimbo, papel, plim, tique, whoosh, sino), ouvir na prancha. Efeito gerado por IA NÃO: perdeu em todos os testes lado a lado | `sons.mjs sintetizar` → `guardar` |
 | GERAR vídeo c/ qualidade + áudio (caro) | veo-3.1 (~$0.40/s; first+last frame) | `veo31` |
 | GERAR vídeo rápido/barato (sem áudio) | grok-imagine-video (720p 5s≈35cr) | `grokImagineVideo` |
 | GERAR vídeo com qualquer outro modelo (Seedance/Kling/Veo lite/Wan/Runway…) | ver `modelos-2026-10.md` | `orVideo` |
@@ -282,6 +285,7 @@ web, PERGUNTE o link ao usuário (regra de ouro 3).
 - `references/text-to-lottie/` — biblioteca **design taste / motion taste / 12 recipes / chaptering** copiada do upgrade da [diffusionstudio/lottie](https://github.com/diffusionstudio/lottie) (EN, runtime-agnóstico, carregar sob demanda — roteamento em `lottie.md`; ignore `player-contract.md`, é Skottie-only)
 - `references/svg-animation.md` — **animar logo/SVG**: Lottie traço vs GSAP preenchido, track-matte (por que evitar), GSAP no Remotion (shim), vídeo IA frames (veo/grok)
 - `references/criar-video.md` — **CRIAR vídeo**: brief → beat table → prancha, Remotion vs HyperFrames, voz, sincronia por palavra, som/mix, checagem
+- `references/sons.md` — **efeitos sonoros e música local**: ordem de busca (catálogo → Kenney → sintetizar), pôr no vídeo, volumes, receitas de síntese, música local (instalação e pegadinhas do audio.cpp), licenças
 - `references/motion-design.md` — **o ofício de motion** (16 leis, composição, receitas, dicionário de eases) + vocabulário de técnicas
 - `references/editar-video.md` — **EDITAR vídeo gravado**: corte de fala, regras ffmpeg, layouts 9:16/PiP/zoom, legendas, B-roll, som, checagem
 - `references/modelos-2026-10.md` — retrato do catálogo (voz, vídeo, imagem nova) com preço; o vivo é `scripts/catalog.mjs`
@@ -309,6 +313,9 @@ web, PERGUNTE o link ao usuário (regra de ouro 3).
 - `video/scripts/render.mjs` — render headless de vídeo Remotion (abre o MP4 ao fim)
 - `video/scripts/qa.mjs` — conferir render: `sheet` (prancha), `strip <t>` (quadros contíguos numa transição), `at` (instantes), `loud` (LUFS/true peak)
 - `scripts/catalog.mjs` — catálogo vivo de modelos de mídia da OR com preço/ficha/vozes
+- `scripts/sons.mjs` — **biblioteca de efeitos sonoros** (`sons/catalogo.json` + arquivos): listar, `buscar`, `pegar --para public/sfx`, `prancha` (página de escuta), `receitas`, `sintetizar` e `guardar`
+- `scripts/lib/synth.mjs` — receitas de efeito sonoro por código (funções puras, wav 44,1 kHz)
+- `scripts/models/stable-audio-local.mjs` — MÚSICA gerada NA MÁQUINA (audio.cpp + Stable Audio 3 small music), sem custo; `instalar` baixa binário e modelo
 - `scripts/models/or-speech.mjs` · `or-video.mjs` — caixas genéricas (qualquer TTS / qualquer modelo de vídeo da OR)
 - `video/examples/` — vídeos prontos de inspiração (não template — construa sob medida)
 
