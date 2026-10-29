@@ -279,6 +279,12 @@ const segs = await transcribe('public/<proj>/narr-1.wav'); // [{start,end,text}]
 geral, tiras contíguas em toda transição (pulo, parada morta, pisca), os 3
 primeiros segundos, e a loudness. Até 3 passes; o que sobrar, diga com honestidade.
 
+`node video/scripts/qa.mjs scan <mp4>` mede o tempo de **tela parada** (≥ 0,6 s sem nada se
+mexer), quadros pretos e quadro que pisca. Mire menos de 5% parado. Primeira medição (29/10/2026):
+o vídeo de afiliação do Meu Serralheiro, que parecia ok nos quadros soltos, deu **78% parado**:
+as chapas entravam e ficavam imóveis até sair, e a deriva da bancada era lenta demais para contar.
+Se o scan acusar, aplique as leis 21-23 do `motion-design.md` nos trechos listados.
+
 ## Integração com as caixas seladas (assets)
 
 As mesmas caixas de `scripts/models/` (ver SKILL.md). Gere os assets pra `public/`:

@@ -74,9 +74,22 @@ e os TikToks de "saas motion design" mais curtidos (out/2026).
     tamanho do vídeo e posicione tudo a partir do centro.
 20. **60 fps para câmera lenta.** Movimento lento a 24/30 fps treme. Para documentário e paralaxe,
     60 fps (o render dobra, vale).
+21. **A cena nunca para.** Depois de entrar, cada peça continua viva até sair: respira (escala
+    ±1-2%), balança (rotação ±1°), o número rola, a lista desce, o contorno pulsa. "Entrou e
+    congelou" é slide. A deriva do fundo sozinha não basta: lenta demais, a medida dá parado.
+    Confira com `qa.mjs scan` (menos de 5% de tela parada).
+22. **Nada espera vazio.** Nenhum slot, quadro ou chapa aparece vazio aguardando o conteúdo: cada
+    peça chega já preenchida, e o espaço só abre quando a fala chega nele.
+23. **Vizinhas diferentes.** Duas cenas seguidas não repetem layout, peça nem direção de entrada
+    (chapa de cima → celular de baixo → quadro de giz de lado). E a mesma frase nunca aparece duas
+    vezes ao mesmo tempo: se a legenda já diz, o destaque mostra outra coisa (o número, o objeto).
 
 Fontes de 17-20: Sanji Nai-Chien (vídeo de lançamento de SaaS feito com Claude, comparado lado
 a lado com um motion designer, out/2026) e o breakdown do Mohit G. (`animacao-em-camadas.md`).
+Fontes de 21-23: as regras que o Claude escreveu sozinho no projeto HyperFrames do Guney Topcu
+("I Quit Remotion…", out/2026) e o `house-style` do guney-motion-kit. Testado lado a lado em
+29/10/2026: as regras valem igual no Remotion; o motor não muda o resultado, por isso a studio
+seguiu no Remotion.
 
 ### Composição do quadro
 

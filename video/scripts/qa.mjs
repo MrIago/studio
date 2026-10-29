@@ -5,6 +5,11 @@
 //   node qa.mjs strip  <video.mp4> <t> [janela=0.8] → quadros CONTÍGUOS em volta de t (transição/corte)
 //   node qa.mjs at     <video.mp4> <t1,t2,…>      → um PNG por instante (hero frame de cada beat)
 //   node qa.mjs loud   <video.mp4>                → LUFS integrado + true peak (+ por trecho com --every 5)
+//   node qa.mjs scan   <video.mp4> [parado=0.6]   → segundos de tela PARADA, quadros pretos e quadro que pisca
+//
+// `scan` mede o que o olho do usuário sente e o quadro solto não mostra: trechos onde nada se
+// mexe (≥ 0,6 s por padrão) são "slide", não motion. Régua do Guney Topcu (out/2026): na versão
+// que ele achou viva, 18 s parados em 8 min; na que parecia slide, 54 s. Mire < 5% do vídeo.
 //
 // Por quê: um quadro por beat prova composição, mas todo defeito de MOVIMENTO
 // (pulo, parada morta antes do 2º movimento, um quadro piscando) vive ENTRE os
@@ -53,6 +58,27 @@ if (cmd === 'sheet') {
   const sum = r.stderr.split('Summary:')[1] || '';
   const I = sum.match(/I:\s+(-?[\d.]+) LUFS/)?.[1], TP = sum.match(/Peak:\s+(-?[\d.]+) dBFS/)?.[1];
   console.log(`integrado ${I} LUFS · true peak ${TP} dBTP · duração ${dur.toFixed(2)}s`);
+} else if (cmd === 'scan') {
+  // quadros em cinza 160×90: diferença média entre vizinhos (0-255)
+  const W = 160, H = 90, still = +(a || 0.6);
+  const raw = execFileSync('ffmpeg', ['-v', 'error', '-i', file, '-vf', `scale=${W}:${H},format=gray`, '-f', 'rawvideo', '-'], { maxBuffer: 1 << 30 });
+  const n = Math.floor(raw.length / (W * H)), px = W * H;
+  const f = (i) => raw.subarray(i * px, (i + 1) * px);
+  const diff = (x, y) => { const A = f(x), B = f(y); let s = 0; for (let k = 0; k < px; k++) s += Math.abs(A[k] - B[k]); return s / px; };
+  const mean = (i) => { const A = f(i); let s = 0; for (let k = 0; k < px; k++) s += A[k]; return s / px; };
+  const d = Array.from({ length: n - 1 }, (_, i) => diff(i, i + 1));
+  // parado: diferença < 0,35 (só ruído de compressão) por ≥ `still` segundos
+  const runs = []; let s0 = -1;
+  d.forEach((v, i) => { if (v < 0.35) { if (s0 < 0) s0 = i; } else { if (s0 >= 0 && (i - s0) / fps >= still) runs.push([s0 / fps, i / fps]); s0 = -1; } });
+  if (s0 >= 0 && (n - 1 - s0) / fps >= still) runs.push([s0 / fps, (n - 1) / fps]);
+  const parado = runs.reduce((acc, [x, y]) => acc + y - x, 0);
+  const pretos = []; for (let i = 0; i < n; i++) if (mean(i) < 8) pretos.push(+(i / fps).toFixed(2));
+  // pisca: um quadro diferente dos dois vizinhos, que concordam entre si
+  const pisca = []; for (let i = 1; i < n - 1; i++) if (d[i - 1] > 12 && d[i] > 12 && diff(i - 1, i + 1) < 6) pisca.push(+(i / fps).toFixed(2));
+  console.log(`parado ${parado.toFixed(1)}s de ${dur.toFixed(1)}s (${(100 * parado / dur).toFixed(1)}%) · ${runs.length} trechos`);
+  runs.slice(0, 30).forEach(([x, y]) => console.log(`  parado ${x.toFixed(2)}–${y.toFixed(2)}s`));
+  console.log(`quadros pretos: ${pretos.length ? pretos.slice(0, 20).join(', ') : 'nenhum'}`);
+  console.log(`quadro que pisca: ${pisca.length ? pisca.slice(0, 20).join(', ') : 'nenhum'}`);
 } else {
   console.log('comando desconhecido'); process.exit(1);
 }
