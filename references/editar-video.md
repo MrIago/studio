@@ -152,6 +152,30 @@ testada e descartada — "melhor eu ver o vídeo e falar".
 - **Zona segura 1080×1920**: texto em x 90-930, y 200-1600 (a UI do Reels/TikTok
   cobre bordas e base). Nada a menos de 60px da borda.
 
+### Vídeo que já chega com legenda queimada (Iago, 29/10/2026)
+
+O cliente manda a gravação "editada com legenda" e não tem o original. Não tente apagar
+a legenda: **recorte um quadrado do rosto ACIMA dela** e monte o vídeo novo em volta.
+
+1. **Meça até onde a legenda sobe**, no vídeo inteiro (frase de 2 linhas sobe mais):
+   4 quadros/s, só a faixa de baixo, em cinza; a primeira linha com muito branco puro
+   (>235) é o topo da legenda. No vídeo do Lucas: nunca acima de y 1426 de 1920.
+   ```bash
+   ffmpeg -v error -i in.mp4 -vf "fps=4,crop=1080:260:0:1250,format=gray" -f rawvideo - | python3 -c "
+   import sys,numpy as np; d=np.frombuffer(sys.stdin.buffer.read(),np.uint8).reshape(-1,260,1080)
+   r=np.where(((d>235).sum(axis=2)>40).any(axis=0))[0]; print(1250+r.min())"
+   ```
+2. **Recorte o quadrado com folga** acima disso, rosto no centro
+   (`crop=1080:1080:0:320` = linhas 320-1400) e confira numa prancha de 8 momentos.
+3. **Recodifique com quadro-chave a cada segundo** (`-r 30 -g 30 -keyint_min 30`): a
+   gravação de celular vem com quadro-chave a cada ~8 s e o rosto congela no seek.
+4. **Layout**: rosto GRANDE em cima (x 70, y 160, 900 px) quando ele só fala, legenda
+   logo abaixo (y ~1140). Com gráfico: rosto **embaixo, centrado, acima da legenda com
+   margem** (400 px em y 1290; legenda em y 1770), e o gráfico divide a parte de cima
+   (y 60-1240). Nunca legenda encostando no rosto, nunca destaque repetindo a legenda.
+   Molde pronto: `~/.studio-engine/src/videos/msp-vendedores-lucas/` (e o trecho
+   `msp-teste-conta`).
+
 ## Legendas
 
 - 1-3 palavras por bloco, quebrando em frase/pausa; aparecem **2 quadros antes**
