@@ -22,7 +22,7 @@ Quando o usuário pedir um **vídeo**, distinga:
 - **CRIAR** = sem filmagem: motion graphics, explicativo, tutorial narrado,
   lançamento, reel animado. Remotion (engine da studio) ou HyperFrames. Você escreve
   o vídeo sob medida e monta os assets da studio. → `references/criar-video.md`
-  **e** `references/motion-design.md` (o ofício: uma ideia por beat, holofote,
+  **e** `references/movimento-em-video.md` (o ofício: uma ideia por beat, holofote,
   mundo persistente, eases, som).
   - Imagem parada (pintura, foto, papel recortado) que ganha profundidade, câmera,
     personagem que respira e transição por dentro de um objeto →
@@ -286,7 +286,7 @@ web, PERGUNTE o link ao usuário (regra de ouro 3).
 - `references/svg-animation.md` — **animar logo/SVG**: Lottie traço vs GSAP preenchido, track-matte (por que evitar), GSAP no Remotion (shim), vídeo IA frames (veo/grok)
 - `references/criar-video.md` — **CRIAR vídeo**: brief → beat table → prancha, Remotion vs HyperFrames, voz, sincronia por palavra, som/mix, checagem
 - `references/sons.md` — **efeitos sonoros e música local**: ordem de busca (catálogo → Kenney → sintetizar), pôr no vídeo, volumes, receitas de síntese, música local (instalação e pegadinhas do audio.cpp), licenças
-- `references/motion-design.md` — **o ofício de motion** (16 leis, composição, receitas, dicionário de eases) + vocabulário de técnicas
+- `references/movimento-em-video.md` — **o ofício de motion** (16 leis, composição, receitas, dicionário de eases) + vocabulário de técnicas
 - `references/editar-video.md` — **EDITAR vídeo gravado**: corte de fala, regras ffmpeg, layouts 9:16/PiP/zoom, legendas, B-roll, som, checagem
 - `references/modelos-2026-10.md` — retrato do catálogo (voz, vídeo, imagem nova) com preço; o vivo é `scripts/catalog.mjs`
 - `references/remotion-official/` — doc oficial completa do Remotion (37 regras; comece pelo `SKILL.md`)
@@ -318,6 +318,21 @@ web, PERGUNTE o link ao usuário (regra de ouro 3).
 - `scripts/models/stable-audio-local.mjs` — MÚSICA gerada NA MÁQUINA (audio.cpp + Stable Audio 3 small music), sem custo; `instalar` baixa binário e modelo
 - `scripts/models/or-speech.mjs` · `or-video.mjs` — caixas genéricas (qualquer TTS / qualquer modelo de vídeo da OR)
 - `video/examples/` — vídeos prontos de inspiração (não template — construa sob medida)
+
+## Onde guardar cada coisa: cada fato em um lugar só
+
+Decisão do Iago (01/11/2026), depois de ouvir as sessões do casei.me, AdzHub e canais dark.
+
+| Se vale... | Fica em |
+|---|---|
+| para qualquer vídeo (sincronia, render, som, movimento) | aqui, na studio |
+| para uma marca (estilo, elenco, voz, peças) | `.claude/rules/project/brand-videos.md` do projeto, que aponta para o código em vez de repetir |
+| para um formato com processo próprio e recorrente (ex.: pixel art decupado plano a plano) | skill especializada, que APONTA para a studio no que é geral e nunca copia |
+| para o plano de conteúdo e os resultados | notas do projeto |
+
+Outro visual não justifica skill nova; só outro processo. Aprendeu algo que valeria em outro projeto: escreva aqui, não na memória nem na brand sheet.
+
+O código dos vídeos (`~/.studio-engine`: composições, kits, scripts) é versionado no repo privado `MrIago/studio-engine`. A mídia pesada (`public/`, renders) fica fora do git. Commite ao fechar um vídeo.
 
 ## Brand sheet: mora no PROJETO, não aqui
 

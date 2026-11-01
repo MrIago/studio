@@ -1,5 +1,5 @@
 // Kit compartilhado dos dois vídeos do programa de vendedores (Meu Serralheiro Pro).
-// Princípios (references/motion-design.md da studio): um celular PERSISTENTE (o mundo
+// Princípios (references/movimento-em-video.md da studio): um celular PERSISTENTE (o mundo
 // não reseta; só a tela navega), a câmera aproxima o que está sendo falado, holofote
 // com um elemento aceso por vez, toque com som no quadro, barra de capítulos como
 // loop aberto visível, legenda presa à palavra falada. Tudo dirigido por frame.

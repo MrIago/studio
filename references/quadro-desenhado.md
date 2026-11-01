@@ -130,7 +130,7 @@ face.load().then((f) => { document.fonts.add(f); return document.fonts.ready })
   (`R_X = { x, y }`), do tamanho de uma tela (1920×1080) e com folga entre elas (no exemplo, colunas
   a cada 2150 e linhas a cada 1300-1600). Organize por parte do vídeo: a base numa grade à esquerda,
   o agente numa coluna no meio, os dashboards à direita. No afastamento final, cada parte vira uma área.
-- O que já apareceu continua no lugar (mundo persistente, lei 5 do `motion-design.md`).
+- O que já apareceu continua no lugar (mundo persistente, lei 5 do `movimento-em-video.md`).
 - Câmera por chaves `{ t, x, y, z, d }`:
   - `t` = quando começa a andar, `d` = quanto leva (1,2-2,4 s), ease `bezier(0.65, 0, 0.35, 1)`.
   - Chegada numa região: `S('s05') - 1` (a câmera chega antes de a voz começar o trecho).

@@ -9,7 +9,7 @@
 - **Formato** — 16:9 (README/YouTube), 9:16 (Reels/Stories), 1:1; duração
 
 Use os exemplos pra **descobrir o que é POSSÍVEL** e pegar **técnicas concretas** — não
-pra clonar. Veja o vocabulário completo em `references/motion-design.md`.
+pra clonar. Veja o vocabulário completo em `references/movimento-em-video.md`.
 
 ## showcase/ — os 21 prompts oficiais (remotion.dev/prompts)
 

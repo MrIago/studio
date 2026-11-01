@@ -51,7 +51,7 @@ está disponível. Use a ESTRUTURA dos componentes; anime com `spring`/`interpol
 
 - **Conhecimento Remotion** → `references/remotion-official/` (doc oficial completa,
   37 regras). Comece pelo `SKILL.md` dela; carregue a regra específica quando precisar.
-- **Motion design pro** → `references/motion-design.md`: vocabulário de técnicas. Leia
+- **Motion design pro** → `references/movimento-em-video.md`: vocabulário de técnicas. Leia
   antes de um vídeo que precisa impressionar — pra não cair em "slide com fade".
 - **Profundidade a partir de imagem parada** → `references/animacao-em-camadas.md`
   (camadas, paralaxe, personagem articulado, transições; serve para papel recortado).
@@ -74,7 +74,7 @@ está disponível. Use a ESTRUTURA dos componentes; anime com `spring`/`interpol
 ## Antes do código: brief → roteiro → beat table → prancha
 
 O que separa vídeo bom de "slide com fade" se decide antes de abrir o editor
-(leia `motion-design.md`, a parte de ofício):
+(leia `movimento-em-video.md`, a parte de ofício):
 
 1. **Brief** (pergunte o que faltar, em texto): para quê e para quem, formato e
    duração, marca (cores hex, fontes, logo OFICIAL), referência de *movimento*,
@@ -283,7 +283,7 @@ primeiros segundos, e a loudness. Até 3 passes; o que sobrar, diga com honestid
 mexer), quadros pretos e quadro que pisca. Mire menos de 5% parado. Primeira medição (29/10/2026):
 o vídeo de afiliação do Meu Serralheiro, que parecia ok nos quadros soltos, deu **78% parado**:
 as chapas entravam e ficavam imóveis até sair, e a deriva da bancada era lenta demais para contar.
-Se o scan acusar, aplique as leis 21-23 do `motion-design.md` nos trechos listados.
+Se o scan acusar, aplique as leis 21-23 do `movimento-em-video.md` nos trechos listados.
 
 ## Integração com as caixas seladas (assets)
 
